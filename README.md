@@ -114,19 +114,19 @@ You can use this option to create an Iceberg table registered in the AWS Glue Da
 | **Storage Location** (required) | Storage Location where the Dynamic Table will be created. |
 | **Node Type** (required) | Name of template used to create node objects. |
 | **Description** | A description of the node's purpose. |
-| **Deploy Enabled** (required) | If TRUE the node will be deployed or redeployed when changes are detected.<br>If FALSE the node will not be deployed or the node will be dropped during redeployment. |
+| **Deploy Enabled** (required) | If TRUE the node will be deployed or redeployed when changes are detected.<br/>If FALSE the node will not be deployed or the node will be dropped during redeployment. |
 
 ### External Iceberg Table Options
 
 | **Options** | **Description** |
 |-------------|-----------------|
-| **Type of Catalog** | Specify the type of catalog:<br>- AWS Glue<br>- Object Storage |
+| **Type of Catalog** | Specify the type of catalog:<br/>- AWS Glue<br/>- Object Storage |
 | **Snowflake EXTERNAL VOLUME name** | Specifies the identifier (name) for the external volume where the Iceberg table stores its metadata files and data in Parquet format. [External volume](https://docs.snowflake.com/sql-reference/sql/create-external-volume) needs to be created in Snowflake as a prerequisite. |
 | **Catalog integration** | Specifies the identifier (name) of the [catalog integration](https://docs.snowflake.com/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def) for this table. |
 | **Catalog namespace** | Optionally specifies the namespace (for example, `my_glue_database`) for the AWS Glue Data Catalog source. Option available if AWS Glue catalog is chosen. |
 | **Catalog table name** | Name of the catalog table. Option available if AWS Glue catalog is chosen. |
 | **Metadata filepath** | Specifies the relative path of the Iceberg metadata file to use for column definitions. Option available if Object Storage Catalog is chosen. |
-| **Schedule refresh** | True or False toggle that determines whether a task will be created or if the SQL to be used in the task will execute DML as a Run action. Prior to creating a task, it is helpful to test the SQL the task will execute to make sure it runs without errors and returns the expected data.<br>- **False** - A table will be created and SQL will execute as a Run action.<br>- **True** - After sufficiently testing the SQL as a Run action, setting Schedule refresh Mode to true will wrap the SQL statement in a task with options specified in Scheduling Options. |
+| **Schedule refresh** | True or False toggle that determines whether a task will be created or if the SQL to be used in the task will execute DML as a Run action. Prior to creating a task, it is helpful to test the SQL the task will execute to make sure it runs without errors and returns the expected data.<br/>- **False** - A table will be created and SQL will execute as a Run action.<br/>- **True** - After sufficiently testing the SQL as a Run action, setting Schedule refresh Mode to true will wrap the SQL statement in a task with options specified in Scheduling Options. |
 
 ### External Iceberg Table Task Scheduling Options
 
@@ -134,13 +134,13 @@ If schedule refresh mode is set to true then Task Scheduling Options can be used
 
 | **Options** | **Description** |
 |-------------|------------------------|
-| **Scheduling Mode** | **Warehouse Task** - User managed warehouse will execute tasks<br>**Serverless Task** - Utilize serverless compute to execute tasks |
-| **Select Warehouse on which to run task** | Enter the name of the warehouse you want the task to run on without quotes<br>*(Visible if Scheduling Mode is set to Warehouse Task)* |
-| **Select initial serverless Warehouse size** | Select the initial compute size on which to run the task. Snowflake will adjust size from there based on target schedule and task run times<br>*(Visible when Scheduling Mode is set to Serverless Task)* |
-| **Task Schedule** | **Minutes** - Allows you to specify a minute interval for running task<br>**Cron** - Allows you to specify a CRON schedule for running task<br>**Predecessor** - Allows you to specify a predecessor task to determine when a task should execute |
-| **Enter task schedule using minutes** | Enter a whole number from 1 to 11520 which represents the number of minutes between task runs<br>*(Only visible when Task Schedule is set to Minutes)* |
-| **Enter task schedule using Cron** | Specifies a cron expression and time zone for periodically running the task. Supports a subset of standard cron utility syntax<br>*(Only visible when Task Schedule is set to Cron)* |
-| **Enter predecessor tasks separated by a comma** | One or more task names that precede the task being created in the current node. Task names are case sensitive and should not be quoted and must exist in the same schema in which the current task is being created. If there are multiple predecessor tasks separate the task names using a comma and no spaces<br>*(Only visible when Task Schedule is set to Predecessor)* |
+| **Scheduling Mode** | **Warehouse Task** - User managed warehouse will execute tasks<br/>**Serverless Task** - Utilize serverless compute to execute tasks |
+| **Select Warehouse on which to run task** | Enter the name of the warehouse you want the task to run on without quotes<br/>*(Visible if Scheduling Mode is set to Warehouse Task)* |
+| **Select initial serverless Warehouse size** | Select the initial compute size on which to run the task. Snowflake will adjust size from there based on target schedule and task run times<br/>*(Visible when Scheduling Mode is set to Serverless Task)* |
+| **Task Schedule** | **Minutes** - Allows you to specify a minute interval for running task<br/>**Cron** - Allows you to specify a CRON schedule for running task<br/>**Predecessor** - Allows you to specify a predecessor task to determine when a task should execute |
+| **Enter task schedule using minutes** | Enter a whole number from 1 to 11520 which represents the number of minutes between task runs<br/>*(Only visible when Task Schedule is set to Minutes)* |
+| **Enter task schedule using Cron** | Specifies a cron expression and time zone for periodically running the task. Supports a subset of standard cron utility syntax<br/>*(Only visible when Task Schedule is set to Cron)* |
+| **Enter predecessor tasks separated by a comma** | One or more task names that precede the task being created in the current node. Task names are case sensitive and should not be quoted and must exist in the same schema in which the current task is being created. If there are multiple predecessor tasks separate the task names using a comma and no spaces<br/>*(Only visible when Task Schedule is set to Predecessor)* |
 | **Enter root task name** | Name of the root task that controls scheduling for the DAG of tasks. Task names are case sensitive, should not be quoted and must exist in the same schema in which the current task is being created. If there are multiple predecessor tasks separate the task names using a comma and no spaces |
 
 ### External Iceberg Table System Columns
@@ -283,11 +283,11 @@ An Iceberg table uses the Apache Iceberg open table format specification, which 
 
 | **Option** | **Description** |
 |------------|-----------------|
-| **Type of Catalog** | Specify the type of catalog: <br>- **Snowflake**<br>- **Polaris** |
+| **Type of Catalog** | Specify the type of catalog: <br/>- **Snowflake**<br/>- **Polaris** |
 | **Snowflake EXTERNAL VOLUME Name** | Specifies the identifier (name) for the external volume where the Iceberg table stores its metadata files and data in Parquet format. [External volume](https://docs.snowflake.com/sql-reference/sql/create-external-volume) needs to be created in Snowflake as a prerequisite. |
 | **Catalog Integration** | Specifies the identifier (name) of the [catalog integration](https://docs.snowflake.com/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def) for this table. This option is enabled if the type of catalog is Polaris. |
 | **Base Location Name** | Specifies the identifier (name) of the [catalog integration](https://docs.snowflake.com/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def) for this table. |
-| **TruncateBefore** | True / False toggle that determines whether or not a table is to be truncated before reloading:<br>- **True** - Table is truncated and Copy-Into statement is executed to reload the data into target table<br>- **False** - Data is loaded directly into target table and no truncate action takes place |
+| **TruncateBefore** | True / False toggle that determines whether or not a table is to be truncated before reloading:<br/>- **True** - Table is truncated and Copy-Into statement is executed to reload the data into target table<br/>- **False** - Data is loaded directly into target table and no truncate action takes place |
 | **Cluster Key** | Cluster key toggle while Enabled allows us to create subset of columns in a table that are explicitly designated to co-locate the data in the same micro-partitions |
 | **Allow Expressions in Cluster Key** | Toggle while Enabled allows you to write expressions |
 
@@ -354,7 +354,7 @@ An Iceberg table uses the Apache Iceberg open table format specification, which 
 
 | **Option** | **Description** |
 |------------|-----------------|
-| **On Error Behavior** | String (constant) that specifies the error handling for the load operation: <br>- CONTINUE<br>- SKIP_FILE<br>- SKIP_FILE_num<br>- SKIP_FILE_num%<br>- ABORT_STATEMENT |
+| **On Error Behavior** | String (constant) that specifies the error handling for the load operation: <br/>- CONTINUE<br/>- SKIP_FILE<br/>- SKIP_FILE_num<br/>- SKIP_FILE_num%<br/>- ABORT_STATEMENT |
 | **Specify the number of errors that can be skipped** | Required when On Error Behavior is either `SKIP_FILE_num` or `SKIP_FILE_num%`. Specify the number of errors that can be skipped. |
 | **Size Limit** | Number (> 0) that specifies the maximum size (in bytes) of data to be loaded for a given COPY statement. |
 | **Purge Behavior** | Boolean that specifies whether to remove the data files from the stage automatically after the data is loaded successfully. |
@@ -465,7 +465,7 @@ This means you can load data from files in micro-batches, making it available to
 | **Stage** | **Description** |
 |----------|---------------|
 | **Enable Snowpipe** | Drop down that helps us to create a pipe to auto ingest files from external stage or validate the Copy-Into statement |
-| **Cloud Provider Options:** | **AWS** - AWS SNS Topic. Specifies the Amazon Resource Name (ARN) for the SNS topic for your S3 bucket<br><br>**Azure** - Integration. Specifies the existing notification integration used to access the storage queue<br><br>**GCP** - Integration. Specifies the existing notification integration used to access the storage queue |
+| **Cloud Provider Options:** | **AWS** - AWS SNS Topic. Specifies the Amazon Resource Name (ARN) for the SNS topic for your S3 bucket<br/><br/>**Azure** - Integration. Specifies the existing notification integration used to access the storage queue<br/><br/>**GCP** - Integration. Specifies the existing notification integration used to access the storage queue |
 | **Test Copy Statement** | To validate the Copy-into statement before we use it to create PIPE |
 | **Load historical data** | Loads the historic data into the target table by executing a COPY_INTO statement |
 
@@ -473,7 +473,7 @@ This means you can load data from files in micro-batches, making it available to
 
 | **Options** | **Description** |
 |------------|-----------------|
-| **Type of catalog** | Specify the type of catalog: <br>- **Snowflake**<br>- **Polaris** |
+| **Type of catalog** | Specify the type of catalog: <br/>- **Snowflake**<br/>- **Polaris** |
 | **Snowflake EXTERNAL VOLUME name** | Specifies the identifier (name) for the external volume where the Iceberg table stores its metadata files and data in Parquet format. [External volume](https://docs.snowflake.com/sql-reference/sql/create-external-volume) needs to be created in Snowflake as a prerequisite. |
 | **Catalog integration** | Specifies the identifier (name) of the [catalog integration](https://docs.snowflake.com/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def) for this table. This option is enabled if the type of catalog is Polaris. |
 | **Base location name** | Specifies the identifier (name) of the [catalog integration](https://docs.snowflake.com/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def) for this table. |
@@ -543,7 +543,7 @@ If you toggle Enable Snowipe under Snowpipe Options to **ON**, these configurati
 
 | **Options** | **Description** |
 |------------|-----------------|
-| **On Error Behavior** | String (constant) that specifies the error handling for the load operation: <br>- CONTINUE<br>- SKIP_FILE<br>- SKIP_FILE_num<br>&nbsp;&nbsp;&nbsp;&nbsp;- Specify the number of errors that can be skipped.<br>- SKIP_FILE_num%<br>&nbsp;&nbsp;&nbsp;&nbsp;- Specify the number of errors that can be skipped. |
+| **On Error Behavior** | String (constant) that specifies the error handling for the load operation: <br/>- CONTINUE<br/>- SKIP_FILE<br/>- SKIP_FILE_num<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Specify the number of errors that can be skipped.<br/>- SKIP_FILE_num%<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Specify the number of errors that can be skipped. |
 | **Enforce Length** | Boolean that specifies whether to truncate text strings that exceed the target column length. |
 | **Truncate Columns** | Boolean that specifies whether to truncate text strings that exceed the target column length. |
 
@@ -551,7 +551,7 @@ If you toggle Enable Snowpipe under Snowpipe Options to **OFF**, these configura
 
 | **Options** | **Description** |
 |------------|-----------------|
-| **On Error Behavior** | String (constant) that specifies the error handling for the load operation:<br>- CONTINUE<br>- SKIP_FILE<br>- SKIP_FILE_num<br>- SKIP_FILE_num%<br>- ABORT_STATEMENT |
+| **On Error Behavior** | String (constant) that specifies the error handling for the load operation:<br/>- CONTINUE<br/>- SKIP_FILE<br/>- SKIP_FILE_num<br/>- SKIP_FILE_num%<br/>- ABORT_STATEMENT |
 | **Specify the number of errors that can be skipped** | Required when On Error Behavior is either `SKIP_FILE_num` or `SKIP_FILE_num%`. Specify the number of errors that can be skipped. |
 | **Size Limit** | Number (> 0) that specifies the maximum size (in bytes) of data to be loaded for a given COPY statement. |
 | **Purge Behavior** | Boolean that specifies whether to remove the data files from the stage automatically after the data is loaded successfully. |
@@ -622,10 +622,10 @@ When deployed for the first time into an environment the Snowpipe node will exec
 
 | **Deployment Behavior** | **Enable Snowpipe** | **Historical Load** | **Load Type** | **Stages Executed** |
 |------------------------|---------------------|-------------------|--------------|-------------------|
-| Initial Deployment | Enable Snowpipe | true | `` | - Create Iceberg Table<br>- Historical full load using CopyInto<br>- Create Pipe<br>- Alter Pipe |
-| Initial Deployment | Enable Snowpipe | true | Reload | - Create Iceberg Table<br>- Truncate Target Table<br>- Historical full load using CopyInto<br>- Create Pipe<br>- Alter Pipe |
-| Initial Deployment | Enable Snowpipe | false | Reload or Empty | - Create Iceberg Table<br>- Truncate Target Table<br>- Create Pipe |
-| Initial Deployment | Test Copy Statement | false | Reload or Empty | - Create Iceberg Table<br>- Test Copy Statement - No pipe creation |
+| Initial Deployment | Enable Snowpipe | true | `` | - Create Iceberg Table<br/>- Historical full load using CopyInto<br/>- Create Pipe<br/>- Alter Pipe |
+| Initial Deployment | Enable Snowpipe | true | Reload | - Create Iceberg Table<br/>- Truncate Target Table<br/>- Historical full load using CopyInto<br/>- Create Pipe<br/>- Alter Pipe |
+| Initial Deployment | Enable Snowpipe | false | Reload or Empty | - Create Iceberg Table<br/>- Truncate Target Table<br/>- Create Pipe |
+| Initial Deployment | Test Copy Statement | false | Reload or Empty | - Create Iceberg Table<br/>- Test Copy Statement - No pipe creation |
 
 ### Snowpipe Iceberg Redeployment
 
