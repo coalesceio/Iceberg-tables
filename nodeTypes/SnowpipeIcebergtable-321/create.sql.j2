@@ -11,12 +11,8 @@ does not permit copying or modification for any other purpose.
 
 
 # Create table first
-{% if desiredState == currentState %}
 
-{{ stage('Nothing to do.') }}
-select 1 = 0
-
-{% elif currentState == undefined or currentState.storageLocations|length == 0%}
+{% if currentState == undefined or currentState.storageLocations|length == 0%}
 
 
           {%set extvol = '' %}
@@ -390,22 +386,12 @@ select 1 = 0
         {{ stage('Drop iceberg table', true, "sql", "drop") }}
          DROP ICEBERG TABLE IF EXISTS {{ fullyQualifiedTargetObjectName }}
 	  
-{%else%}
-
-{{ stage('Nothing to do.') }}
-select 1 = 0
-	  
 {%endif%}
 
 
 {# Historical load and create pipe #}
 
-{% if desiredState == currentState %}
-
-{{ stage('Nothing to do.') }}
-select 1 = 0
-
-{% elif desiredState %}
+{% if desiredState %}
 
   {% set srcSchName = desiredState.node.location.name %}
      {% set db = desiredState.storageLocations | selectattr('name', 'equalto', srcSchName) | map(attribute='database') | first %}
@@ -670,11 +656,6 @@ select 1 = 0
            
                      ALTER PIPE {{ fqPipeName }} REFRESH;
                   {%endif%}
-
-         {%else%}
-
-              {{ stage('Test Copy Statement-No Pipe creation') }}
-              select 1 = 0
 
         {%endif%}
              
