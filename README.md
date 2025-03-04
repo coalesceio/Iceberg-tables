@@ -77,6 +77,10 @@ Changes in structured data type columns excluding any other config changes resul
 |-------|-------------|
 | **Alter Iceberg Table** | This stage will execute `ALTER ICEBERG TABLE` statement and alters structured data types like OBJECT, MAP or ARRAY |
 
+### Redeployment with no changes 
+
+If the nodes are redeployed with no changes compared to previous deployment,then no stages are executed
+
 #### Snowflake Iceberg Undeployment
 
 If a Snowflake Iceberg table is dropped from the workspace and commited to Git results in table dropped from target environment.
@@ -223,7 +227,11 @@ The following stages are executed.
 | **Suspend Root Task** | To add a task into a DAG of task the root task needs to be put into a suspended state. |
 | **Create Task** | This stage will create a task that will load the target table on the schedule specified. |
 
-### External Iceberg Table Dropped
+### Redeployment with no changes 
+
+If the nodes are redeployed with no changes compared to previous deployment,then no stages are executed
+
+### External Iceberg Table Undeployment
 
 If a Snowflake iceberg table with task is dropped from the workspace and commited to Git results in table and task dropped from target environment.
 
@@ -414,6 +422,10 @@ These changes can be made either in isolation or all together, and will result i
 | **Stage** | **Description** |
 |----------|---------------|
 | **Create Iceberg table** | Create table statement is executed to perform the alter operation. |
+
+### Redeployment with no changes 
+
+If the nodes are redeployed with no changes compared to previous deployment,then no stages are executed
 
 ### Copy-Into Iceberg Undeployment
 
@@ -649,6 +661,10 @@ The following stages are executed:
 | **Historical Full Load Using CopyInto** | Historical data are loaded if 'Load Historical' toggle is on. |
 | **Create Pipe** | Pipe is recreated if Enable Snowpipe option is true. |
 | **Alter Pipe** | Pipe is refreshed if 'Load Historical' toggle is on. |
+
+### Redeployment with no changes 
+
+If the nodes are redeployed with no changes compared to previous deployment,then no stages are executed
 
 ### Snowpipe Iceberg Undeployment
 
