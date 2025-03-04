@@ -11,12 +11,8 @@ does not permit copying or modification for any other purpose.
 
 
 # Create table first
-{% if desiredState == currentState %}
 
-{{ stage('Nothing to do.') }}
-select 1 = 0
-
-{% elif currentState == undefined or currentState.storageLocations|length == 0%}
+{% if currentState == undefined or currentState.storageLocations|length == 0%}
 
 
           {%set extvol = '' %}
@@ -443,11 +439,6 @@ select 1 = 0
            
         {{ stage('Drop iceberg table', true, "sql", "drop") }}
          DROP ICEBERG TABLE IF EXISTS {{ fullyQualifiedTargetObjectName }}
-	  
-{%else%}
-
-{{ stage('Nothing to do.') }}
-select 1 = 0
 	  
 {%endif%}
 

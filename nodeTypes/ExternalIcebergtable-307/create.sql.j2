@@ -12,12 +12,7 @@ does not permit copying or modification for any other purpose.
 
 # Create Iceberg table first
 
-{% if desiredState == currentState %}
-
-{{ stage('Nothing to do.') }}
-select 1 = 0
-
-{% elif (desiredState and currentState == undefined) or (currentState != desiredState and currentState != undefined and desiredState != undefined)%}
+{% if (desiredState and currentState == undefined) or (currentState != desiredState and currentState != undefined and desiredState != undefined)%}
 
 
           {%set extvol = '' %}
@@ -83,20 +78,11 @@ select 1 = 0
         {{ stage('Drop iceberg table', true, "sql", "drop") }}
          DROP ICEBERG TABLE IF EXISTS {{ fullyQualifiedTargetObjectName }}
 	  
-{%else%}
-
-{{ stage('Nothing to do.') }}
-select 1 = 0
-	  
 {%endif%}
 
 {# Create Task Second #}
-{% if desiredState == currentState %}
 
-    {{ stage('No task edits.') }}
-    select 1 = 0
-
-{% elif (desiredState and currentState == undefined) or (currentState != desiredState and currentState != undefined and desiredState != undefined)  %}
+{% if (desiredState and currentState == undefined) or (currentState != desiredState and currentState != undefined and desiredState != undefined)  %}
 
         {# Target Table Info #}
         {% set targetTableDatabase = ref_no_link(desiredState.node.location.name, desiredState.node.name).split('.')[0] %} 
@@ -171,10 +157,6 @@ select 1 = 0
                 ALTER TASK {{ fullyQualifiedTaskName }} RESUME;
             {%- endif -%}
 
-        {% else %}
-            {{ stage('Scheduled refresh Off - No Task.') }}
-            select 1 = 0
-        
         {%- endif -%}
 
 {% elif currentState != undefined and desiredState == undefined %}
@@ -202,10 +184,5 @@ select 1 = 0
             DROP TASK IF EXISTS {{ fullyQualifiedTaskName }} 
         {%- endif -%}
     {%- endif -%}
-
-{%- else -%}
-
-{{ stage('No task edits.  Unknown state.') }}
-select 1 = 0
 
 {% endif %}
