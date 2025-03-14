@@ -121,6 +121,8 @@ does not permit copying or modification for any other purpose.
             {# Task Type #}
             {%- if desiredState.config.schedulingMode == 'Warehouse Task' -%} 
                 {# Can be updated during deployment via a parameter to account for different warehouse names in different deployments #}
+
+                {% if 'targetTaskWarehouse'  in  desiredState.parameters %}
                 {% if desiredState.parameters.targetTaskWarehouse == 'DEV ENVIRONMENT' %}
                     {% set taskType = 'WAREHOUSE = ' + desiredState.config.whName %}
                 {% else %}
@@ -129,6 +131,7 @@ does not permit copying or modification for any other purpose.
             {%- else -%}
                 {%- set taskType = 'USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = ' + desiredState.config.serverlessSize -%} 
             {%- endif -%}
+            {%-endif -%}
 
             {# Schedule Type #}
             {%- if desiredState.config.schedulePeriodOption == 'Minutes' -%} 
