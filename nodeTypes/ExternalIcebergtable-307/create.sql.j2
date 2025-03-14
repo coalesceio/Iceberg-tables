@@ -10,6 +10,18 @@ does not permit copying or modification for any other purpose.
 {# == Node Type Description    :  == #}
 {#Release date:20241128  Version:1.1.2 Released By:AS  Description: Materialization type corrected and Re-Sync columns config enabled #}
 
+{# Parameter Check for Deployment #}
+{%if desiredState and currentState != desiredState and desiredState.config.schedulingMode == 'Warehouse Task' %}
+     {% if desiredState.parameters == {} or 'targetTaskWarehouse' not in  desiredState.parameters or desiredState.parameters.targetTaskWarehouse == ''%}
+
+         {{stage('WARNING')}}
+         
+          /*Add parameter targetTaskWarehouse in workspace settings and deployment environment for successful execution of node.
+          The default value for the parameter is 'DEV ENVIRONMENT'.
+          For more information, refer to the documentation.*/
+	{%endif%}
+{%endif%}
+
 # Create Iceberg table first
 
 {% if (desiredState and currentState == undefined) or (currentState != desiredState and currentState != undefined and desiredState != undefined)%}
