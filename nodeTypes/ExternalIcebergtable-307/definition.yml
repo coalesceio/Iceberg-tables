@@ -83,7 +83,7 @@ metadata:
                        "NOTE:
                        \n
                        Ensure the parameter targetTaskWarehouse is added in Workspace and 
-                       deployment environment  for successful creation of Steam.  
+                       deployment environment  for successful creation of task to refresh iceberg table.  
                        For more information, refer to the documentation."
         enableIf: "{%- if (parameters == {} or parameters.targetTaskWarehouse == '' ) and config.schedulingMode == 'Warehouse Task'-%} true {%- else -%} false {%- endif -%}"
 

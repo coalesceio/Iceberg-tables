@@ -22,7 +22,7 @@ does not permit copying or modification for any other purpose.
 	{%endif%}
 {%endif%}
 
-# Create Iceberg table first
+{# Create Iceberg table first #}
 
 {% if (desiredState and currentState == undefined) or (currentState != desiredState and currentState != undefined and desiredState != undefined)%}
 
@@ -34,12 +34,12 @@ does not permit copying or modification for any other purpose.
           {%set metafilepath ='' %}
           {%set baseloc ='' %}
 
-        #External volume
+        {#External volume#}
            {%if desiredState.config.extvol != '' %}
             {%set extvol =  desiredState.config.extvolume %}
           {%endif%}
         
-        #Catalogintegration
+        {#Catalogintegration#}
 
           {%if desiredState.config.catint != '' %}
             {%set catalogval =   desiredState.config.catint %}
@@ -47,18 +47,18 @@ does not permit copying or modification for any other purpose.
             {%set catalogval =   'SNOWFLAKE' %}
           {%endif%}
 
-        #Catalogtablename
+        {#Catalogtablename#}
 
           {%if desiredState.config.cattable != '' and desiredState.config.tcatalog == 'AWS Glue' %}
             {%set catalogtablename = desiredState.config.cattable %}
           {%endif%}
 
-        #Catalogdbname
+        {#Catalogdbname#}
           {%if desiredState.config.catdb != '' and desiredState.config.tcatalog == 'AWS Glue' %}
             {%set catalogdbname = desiredState.config.catdb %}
           {%endif%}
 
-        #Metadatafilepath
+        {#Metadatafilepath#}
           {%if desiredState.config.metafilepath != '' and desiredState.config.tcatalog == 'Object storage' %}
             {%set metafilepath =  desiredState.config.metafilepath %}
           {%endif%}
