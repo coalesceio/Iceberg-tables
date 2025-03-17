@@ -14,7 +14,7 @@ operation:
     schedulePeriod: "60"
     schedulePeriodOption: Predecessor
     schedulingMode: Warehouse Task
-    schrefresh: false
+    schrefresh: true
     serverlessSize: MEDIUM
     tcatalog: Object storage
     whName: <WAREHOUSE_NAME>

@@ -97,6 +97,17 @@ metadata:
     - groupName: Source Data
       items:
 
+      - type: label
+        attributeName: note2
+        displayName: 
+                       "NOTE:
+                       \n
+                       Ensure the parameter loadType is added in Workspace and 
+                       deployment environment if you intend to reload data from source files
+                       Refer documentation for more info"
+        enableIf: "{%- if parameters == {} -%} true {%- else -%} false {%- endif -%}"
+
+
       - displayName: Internal or External Stage
         attributeName: intextstage
         type: toggleButton

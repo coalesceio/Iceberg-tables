@@ -10,7 +10,19 @@ does not permit copying or modification for any other purpose.
 {# == Node Type Description    :  == #}
 {#Release date:20241128  Version:1.1.2 Released By:AS  Description: Materialization type corrected and Re-Sync columns config enabled #}
 
-# Create Iceberg table first
+{# Parameter Check for Deployment #}
+{%if desiredState and currentState != desiredState and desiredState.config.schedulingMode == 'Warehouse Task' %}
+     {% if desiredState.parameters == {} or 'targetTaskWarehouse' not in  desiredState.parameters or desiredState.parameters.targetTaskWarehouse == ''%}
+
+         {{stage('WARNING')}}
+         
+          /*Add parameter targetTaskWarehouse in workspace settings and deployment environment for successful execution of node.
+          The default value for the parameter is 'DEV ENVIRONMENT'.
+          For more information, refer to the documentation.*/
+	{%endif%}
+{%endif%}
+
+{# Create Iceberg table first #}
 
 {% if (desiredState and currentState == undefined) or (currentState != desiredState and currentState != undefined and desiredState != undefined)%}
 
@@ -22,12 +34,12 @@ does not permit copying or modification for any other purpose.
           {%set metafilepath ='' %}
           {%set baseloc ='' %}
 
-        #External volume
+        {#External volume#}
            {%if desiredState.config.extvol != '' %}
             {%set extvol =  desiredState.config.extvolume %}
           {%endif%}
         
-        #Catalogintegration
+        {#Catalogintegration#}
 
           {%if desiredState.config.catint != '' %}
             {%set catalogval =   desiredState.config.catint %}
@@ -35,18 +47,18 @@ does not permit copying or modification for any other purpose.
             {%set catalogval =   'SNOWFLAKE' %}
           {%endif%}
 
-        #Catalogtablename
+        {#Catalogtablename#}
 
           {%if desiredState.config.cattable != '' and desiredState.config.tcatalog == 'AWS Glue' %}
             {%set catalogtablename = desiredState.config.cattable %}
           {%endif%}
 
-        #Catalogdbname
+        {#Catalogdbname#}
           {%if desiredState.config.catdb != '' and desiredState.config.tcatalog == 'AWS Glue' %}
             {%set catalogdbname = desiredState.config.catdb %}
           {%endif%}
 
-        #Metadatafilepath
+        {#Metadatafilepath#}
           {%if desiredState.config.metafilepath != '' and desiredState.config.tcatalog == 'Object storage' %}
             {%set metafilepath =  desiredState.config.metafilepath %}
           {%endif%}
@@ -109,14 +121,18 @@ does not permit copying or modification for any other purpose.
             {# Task Type #}
             {%- if desiredState.config.schedulingMode == 'Warehouse Task' -%} 
                 {# Can be updated during deployment via a parameter to account for different warehouse names in different deployments #}
+
+                {% if 'targetTaskWarehouse'  in  desiredState.parameters %}
                 {% if desiredState.parameters.targetTaskWarehouse == 'DEV ENVIRONMENT' %}
                     {% set taskType = 'WAREHOUSE = ' + desiredState.config.whName %}
                 {% else %}
                     {% set taskType = 'WAREHOUSE = ' + desiredState.parameters.targetTaskWarehouse %}
                 {% endif %}
+                {% endif %}
             {%- else -%}
                 {%- set taskType = 'USER_TASK_MANAGED_INITIAL_WAREHOUSE_SIZE = ' + desiredState.config.serverlessSize -%} 
             {%- endif -%}
+            
 
             {# Schedule Type #}
             {%- if desiredState.config.schedulePeriodOption == 'Minutes' -%} 

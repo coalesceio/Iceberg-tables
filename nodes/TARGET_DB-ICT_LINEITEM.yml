@@ -4,6 +4,7 @@ name: ICT_LINEITEM
 operation:
   config:
     basename: LITEMOBJ
+    catint: null
     clusterKey: false
     clusterKeyConfig:
       items:
@@ -13,6 +14,7 @@ operation:
         - {}
     clusterKeyExpressions: false
     extvolume: sficebergextvol1
+    tcatalog: Polaris
   database: ""
   deployEnabled: true
   description: Lineitem data as defined by TPC-H
