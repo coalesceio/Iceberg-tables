@@ -10,7 +10,7 @@ does not permit copying or modification for any other purpose.
 {# == Node Type Description    : This node creates an Iceberg target table to load data from internal or external stages using Copy-Into.Also creates a pipe to  loads data from files as soon as they are available in a stage external == #}
 
 {%if desiredState and currentState != desiredState%}
-     {%if desiredState.parameters == {} or 'targetIntegrationOrAwsSNSTopic' not in parameters or desiredState.parameters.targetIntegrationOrAwsSNSTopic == ''%}
+     {%if desiredState.parameters == {} or 'targetIntegrationOrAwsSNSTopic' not in desiredState.parameters or desiredState.parameters.targetIntegrationOrAwsSNSTopic == ''%}
 
          {{stage('WARNING')}}   
          /*
