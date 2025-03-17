@@ -28,7 +28,7 @@ does not permit copying or modification for any other purpose.
 {%endif%}
 
 
-# Create table first
+{# Create table first #}
 
 {% if currentState == undefined or currentState.storageLocations|length == 0%}
 
@@ -36,23 +36,23 @@ does not permit copying or modification for any other purpose.
           {%set extvol = '' %}
           {%set baseloc ='' %}
 
-        #External volume
+        {#External volume#}
           {%if desiredState.config.extvol != '' %}
             {%set extvol =  desiredState.config.extvolume %}
           {%endif%}
         
 
-        #Baselocation
+        {#Baselocation#}
         {%if desiredState.config.basename != '' %}
             {%set baseloc =  desiredState.config.basename %}
         {%endif%}
 
-        #Catalog sync
+        {#Catalog sync#}
         {%if desiredState.config.catint != '' and desiredState.config.tcatalog == 'Polaris' %}
            {%set catsync = desiredState.config.catint %}
         {%endif%}
 
-        #Figure out cluster key
+        {#Figure out cluster key#}
 
         {% set nsVariables = namespace(finalClusterKey="") %}
         {% if desiredState.config.clusterKey == true %}
