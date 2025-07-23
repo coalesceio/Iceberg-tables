@@ -3,7 +3,6 @@ id: cf678e66-0290-4da9-b970-8127ac082118
 name: SAMPLE_OBJECT
 operation:
   database: ""
-  dataset: ""
   deployEnabled: true
   description: ""
   locationName: SOURCE_DATA
@@ -47,12 +46,9 @@ operation:
             transform: ""
         transform: ""
         uniqueKey: false
-    join:
-      joinCondition: FROM {{ ref('SAMPLE_SOURCE', 'SAMPLE_OBJECT') }}
   name: SAMPLE_OBJECT
   schema: ""
   sqlType: Source
-  table: SAMPLE_OBJECT
   type: sourceInput
   version: 1
 type: Node

@@ -68,7 +68,7 @@ does not permit copying or modification for any other purpose.
         {% endif %}
 
     
-         {{ stage('Create Iceberg Table', true, "sql", "create") }}
+         {{ stage('Create Iceberg Table') }}
          
          CREATE OR REPLACE ICEBERG TABLE {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }}
         (
@@ -270,13 +270,13 @@ does not permit copying or modification for any other purpose.
 
         {%if currentState.node.name != desiredState.node.name or ns.targetlocationtest == false%}
 
-           {{ stage('Drop Iceberg Table at previous target location', true, "sql", "alter") }}
+           {{ stage('Drop Iceberg Table at previous target location') }}
 
            DROP ICEBERG TABLE IF EXISTS {{ ref_no_link(currentState.node.location.name, currentState.node.name) }}
 
         {%endif%}
          
-        {{ stage('Create Iceberg Table', true, "sql", "alter") }}
+        {{ stage('Create Iceberg Table') }}
 
          CREATE OR REPLACE ICEBERG TABLE {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }}
          (
@@ -357,12 +357,12 @@ does not permit copying or modification for any other purpose.
 
                     {%if ns1.renamefield == true %}
 					
-					    {{ stage('Alter structured data type in Iceberg Table', true, "sql", "alter") }}
+					    {{ stage('Alter structured data type in Iceberg Table') }}
                         
                         ALTER ICEBERG TABLE {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }}ALTER COLUMN {{ desiredColname }} SET DATA TYPE {{ desiredDatatype }} RENAME FIELDS
                     {%else%}
 
-                        {{ stage('Alter structured data type in Iceberg Table', true, "sql", "alter") }}
+                        {{ stage('Alter structured data type in Iceberg Table') }}
 						
                         ALTER ICEBERG TABLE {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }}ALTER COLUMN {{ desiredColname }} SET DATA TYPE {{ desiredDatatype }}
                     {%endif%}
@@ -384,7 +384,7 @@ does not permit copying or modification for any other purpose.
     {% set targetObjectSchema = ref_no_link(currentState.node.location.name, currentState.node.name).split('.')[1] %} 
     {% set fullyQualifiedTargetObjectName = ref_no_link(currentState.node.location.name, currentState.node.name) %}
            
-        {{ stage('Drop iceberg table', true, "sql", "drop") }}
+        {{ stage('Drop iceberg table') }}
          DROP ICEBERG TABLE IF EXISTS {{ fullyQualifiedTargetObjectName }}
 	  
 {%endif%}
