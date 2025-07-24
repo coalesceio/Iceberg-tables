@@ -1,6 +1,6 @@
 fileVersion: 1
 id: d3f4c1d4-03af-48aa-917c-59fb57a91873
-name: ICT_LINEITEM
+name: ICT_LINEITEM123
 operation:
   config:
     basename: LITEMOBJ
@@ -96,9 +96,9 @@ operation:
             nodeName: LINEITEM
         join:
           joinCondition: FROM {{ ref('SOURCE_DATA', 'LINEITEM') }} "LINEITEM"
-        name: ICT_LINEITEM
+        name: ICT_LINEITEM123
         noLinkRefs: []
-  name: ICT_LINEITEM
+  name: ICT_LINEITEM123
   overrideSQL: false
   schema: ""
   sqlType: "305"

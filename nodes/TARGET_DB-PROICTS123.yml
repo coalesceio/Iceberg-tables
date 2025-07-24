@@ -1,6 +1,6 @@
 fileVersion: 1
 id: 4bd1abbe-243f-460a-9f6f-37f19f9823b3
-name: PROICTS
+name: PROICTS123
 operation:
   config:
     basename: products
@@ -80,9 +80,9 @@ operation:
             nodeName: PRODUCTS
         join:
           joinCondition: FROM {{ ref('SOURCE_DATA', 'PRODUCTS') }} "PRODUCTS"
-        name: PROICTS
+        name: PROICTS123
         noLinkRefs: []
-  name: PROICTS
+  name: PROICTS123
   overrideSQL: false
   schema: ""
   sqlType: "305"

@@ -1,6 +1,6 @@
 fileVersion: 1
 id: d2e98ab4-890c-4149-ae21-aa5103e23b2d
-name: ICT_SAMPLE_OBJECTEX1
+name: ICT_SAMPLE_OBJECTEX112
 operation:
   config:
     basename: TABLE_OBJECT
@@ -67,9 +67,9 @@ operation:
             nodeName: SAMPLE_OBJECT
         join:
           joinCondition: FROM {{ ref('SOURCE_DATA', 'SAMPLE_OBJECT') }} "SAMPLE_OBJECT"
-        name: ICT_SAMPLE_OBJECTEX1
+        name: ICT_SAMPLE_OBJECTEX112
         noLinkRefs: []
-  name: ICT_SAMPLE_OBJECTEX1
+  name: ICT_SAMPLE_OBJECTEX112
   overrideSQL: false
   schema: ""
   sqlType: "305"

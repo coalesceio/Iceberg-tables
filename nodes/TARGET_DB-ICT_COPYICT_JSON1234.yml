@@ -1,6 +1,6 @@
 fileVersion: 1
 id: 3ed955e2-2219-4953-bd82-a4290bc9dd30
-name: ICT_COPYICT_JSON123
+name: ICT_COPYICT_JSON1234
 operation:
   config:
     basename: ICTADDRESSJSON
@@ -275,9 +275,9 @@ operation:
           joinCondition: |-
             FROM {{ ref('TARGET_DB', 'COPYICT_JSON') }} "COPYICT_JSON", 
             lateral flatten(input => PARSE_JSON("COPYICT_JSON"."SRC")::VARIANT:"phoneNumbers", OUTER => TRUE) "SRC_phoneNumbers"
-        name: ICT_COPYICT_JSON123
+        name: ICT_COPYICT_JSON1234
         noLinkRefs: []
-  name: ICT_COPYICT_JSON123
+  name: ICT_COPYICT_JSON1234
   overrideSQL: false
   schema: ""
   sqlType: "305"

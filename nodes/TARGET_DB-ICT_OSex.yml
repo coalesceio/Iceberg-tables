@@ -1,6 +1,6 @@
 fileVersion: 1
 id: 14cadfe0-1abe-475c-b316-78392ffea76d
-name: ICT_OS
+name: ICT_OSex
 operation:
   config:
     basename: locname
@@ -56,9 +56,9 @@ operation:
         dependencies: []
         join:
           joinCondition: ""
-        name: ICT_OS
+        name: ICT_OSex
         noLinkRefs: []
-  name: ICT_OS
+  name: ICT_OSex
   overrideSQL: false
   schema: ""
   sqlType: "321"

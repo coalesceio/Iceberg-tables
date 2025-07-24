@@ -1,6 +1,6 @@
 fileVersion: 1
 id: 145aa515-4bf4-47d3-97a8-cd1940f1d75a
-name: SAMPLE_ARRAYICT
+name: SAMPLE_ARRAYICT123
 operation:
   config:
     basename: array
@@ -63,9 +63,9 @@ operation:
             nodeName: SAMPLE_ARRAY
         join:
           joinCondition: FROM {{ ref('SOURCE_DATA', 'SAMPLE_ARRAY') }} "SAMPLE_ARRAY"
-        name: SAMPLE_ARRAYICT
+        name: SAMPLE_ARRAYICT123
         noLinkRefs: []
-  name: SAMPLE_ARRAYICT
+  name: SAMPLE_ARRAYICT123
   overrideSQL: false
   schema: ""
   sqlType: "305"

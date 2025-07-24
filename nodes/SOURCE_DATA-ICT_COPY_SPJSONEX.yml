@@ -1,6 +1,6 @@
 fileVersion: 1
 id: 22b892f4-9948-4829-b187-e567543c86d3
-name: ICT_COPY_SPJSON
+name: ICT_COPY_SPJSONEX
 operation:
   config:
     awsSnsTopic: null
@@ -174,9 +174,9 @@ operation:
         dependencies: []
         join:
           joinCondition: ""
-        name: ICT_COPY_SPJSON
+        name: ICT_COPY_SPJSONEX
         noLinkRefs: []
-  name: ICT_COPY_SPJSON
+  name: ICT_COPY_SPJSONEX
   overrideSQL: false
   schema: ""
   sqlType: "321"
