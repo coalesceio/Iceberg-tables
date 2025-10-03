@@ -3,20 +3,22 @@ id: e34bc6d2-8edc-4e0f-beee-9cc577558c63
 name: ICDT_LRV_ORDERS
 operation:
   config:
-    baseLocation: ""
+    baseLocation: LRV
     clusterKey: false
     clusterKeyConfig:
       items:
         - {}
     cpygrants: false
-    externalVolume: ""
+    externalVolume: sficebergextvol1
     initialize: ON_CREATE
     lagSpecification:
       items:
         - {}
     orderBy:
       items:
-        - {}
+        - colName:
+            columnCounter: 76b42353-7d12-4559-b11e-e16f652b2607
+            stepCounter: e34bc6d2-8edc-4e0f-beee-9cc577558c63
     orderByDateTime:
       items:
         - {}
@@ -25,7 +27,9 @@ operation:
         - {}
     partitionBy:
       items:
-        - {}
+        - partColName:
+            columnCounter: 7d0edde6-e617-43b4-b2dc-bc314ac18718
+            stepCounter: e34bc6d2-8edc-4e0f-beee-9cc577558c63
     recordVersioning: Datetime Column
     recordorderBy:
       items:
@@ -210,7 +214,7 @@ operation:
           - locationName: SOURCE_DATA
             nodeName: ORDERS
         join:
-          joinCondition: FROM {{ ref('SOURCE_DATA', 'ORDERS') }} "ORDERS"
+          joinCondition: FROM {{ ref('SOURCE_DATA', 'ORDERS') }} "ORDERS" Where "O_ORDERKEY" = 9697
         name: ICDT_LRV_ORDERS
         noLinkRefs: []
   name: ICDT_LRV_ORDERS

@@ -131,46 +131,32 @@ does not permit copying or modification for any other purpose.
         {# Column description changes and other column level changes #}
         {% for alterCurCol in currentState.columns %}        
             {% if alterCurCol.id in desiredState.columns | map(attribute="id") %}
-                {% set currentColumnName = currentState.columns 
-                                            | selectattr('id', "equalto", alterCurCol.id)
-                                            | map(attribute='name')
-                                            | first %}
+                {% set currentColumnName = alterCurCol.name %}
                 {% set desiredColumnName = desiredState.columns 
                                             | selectattr('id', "equalto", alterCurCol.id) 
                                             | map(attribute='name') 
                                             | first %}                                          
         
-                {% set currentDatatype = icebergcoldatatype(currentState.columns
-                                            | selectattr('id', "equalto", alterCurCol.id)
-                                            | map(attribute='dataType')
-                                            | first) %}
+                {% set currentDatatype = icebergcoldatatype(alterCurCol.dataType) %}
                 {% set desiredDatatype = icebergcoldatatype(desiredState.columns 
                                             | selectattr('id', "equalto", alterCurCol.id) 
                                             | map(attribute='dataType') 
                                             | first) %}                                            
-
-                {% set currentNullable = currentState.columns 
-                                            | selectattr('id', "equalto", alterCurCol.id) 
-                                            | map(attribute='nullable') 
-                                            | first %}
+                {# -- No changes for dynamic iceberg as of now------------------------
+                {% set currentNullable = alterCurCol.nullable %}
                 {% set desiredNullable = desiredState.columns 
                                             | selectattr('id', "equalto", alterCurCol.id) 
                                             | map(attribute='nullable') 
                                             | first %}
 
-                {% set currentDefaultValue = currentState.columns 
-                                            | selectattr('id', "equalto", alterCurCol.id) 
-                                            | map(attribute='defaultValue') 
-                                            | first %}
+                {% set currentDefaultValue = alterCurCol.defaultValue %}
                 {% set desiredDefaultValue = desiredState.columns 
                                             | selectattr('id', "equalto", alterCurCol.id) 
                                             | map(attribute='defaultValue') 
                                             | first %}
+                ---------------------------------------------------------------------#}
                     
-                {% set currentDescription = currentState.columns
-                                            | selectattr('id', "equalto", alterCurCol.id)
-                                            | map(attribute='description')
-                                            | first %}
+                {% set currentDescription = alterCurCol.description %}
                 {% set desiredDescription = desiredState.columns 
                                             | selectattr('id', "equalto", alterCurCol.id) 
                                             | map(attribute='description') 
@@ -184,7 +170,7 @@ does not permit copying or modification for any other purpose.
                     {% set nsVariables.descolchanges = nsVariables.descolchanges + 1 %}
                 {% endif %}
 
-                {% if (datatypeTest == false or defaultValueTest == false or columnnameTest == false ) %}
+                {% if datatypeTest == false or defaultValueTest == false or columnnameTest == false %}
                     {% set nsVariables.othercolchanges = nsVariables.othercolchanges + 1 %}
                 {% endif %}
 
@@ -242,7 +228,7 @@ does not permit copying or modification for any other purpose.
             or externalVolumeTest               == false
             or baseLocationTest                 == false
             or nsVariables.acolchanges          > 0
-            or nsVariables.dcolchanges          > 0  %}      
+            or nsVariables.dcolchanges          > 0  %}
 
             {% set createTest = true %}
         {% else %}
@@ -342,7 +328,7 @@ does not permit copying or modification for any other purpose.
         {% for source in desiredState.sources %}
             SELECT
                 {% for col in source.columns %}
-            {{ get_source_transform(col) }} AS "{{ col.name }}"
+                    {{ get_source_transform(col) }} AS "{{ col.name }}"
                     {%- if not loop.last -%}, {% endif %}
                 {% endfor %}
             {{ source.join }}
@@ -393,6 +379,33 @@ does not permit copying or modification for any other purpose.
             RENAME TO {{ desiredFullyQualifiedTargetDynamicTableName }}
         {% endif %}
 
+        {# Change in column description #}
+        {% if nsVariables.descolchanges > 0 %}
+            {% for alterCurCol in currentState.columns %}        
+                {% if alterCurCol.id in desiredState.columns | map(attribute="id") %}
+                    {% set currentDescription = alterCurCol.description %}
+
+                    {% set desiredColumnName = desiredState.columns
+                                                | selectattr('id', "equalto", alterCurCol.id)
+                                                | map(attribute='name')
+                                                | first %}
+                    {% set desiredDescription = desiredState.columns
+                                                | selectattr('id', "equalto", alterCurCol.id)
+                                                | map(attribute='description')
+                                                | first %}
+
+                    {% set descriptionTest = currentDescription == desiredDescription %}
+
+                    {% if descriptionTest == false %}
+                        {{ stage('Alter Dynamic Iceberg Table-Modify Column') }}
+                        ALTER DYNAMIC TABLE {{ desiredFullyQualifiedTargetDynamicTableName }}
+                        MODIFY COLUMN {{desiredColumnName}}
+                        COMMENT '{{desiredDescription }}'
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
         {# Figure out cluster key changes #}
         {% set nsVariables = namespace(finalClusterKey = "", clusterValues = []) %}
         {% if clusterKeyTest == false or clusterKeyConfigTest == false %}
@@ -416,26 +429,6 @@ does not permit copying or modification for any other purpose.
             {{ nsVariables.finalClusterKey }}
 
         {% endif %}
-
-        {# Change in column description #}
-        {% for alterCurCol in currentState.columns %}        
-            {% if alterCurCol.id in desiredState.columns | map(attribute="id") %}
-            
-                {% set currentDescription = alterCurCol.description %}
-
-                {% set desiredColumnName = desiredState.columns | selectattr('id', "equalto", alterCurCol.id) | map(attribute='name') | first %}
-                {% set desiredDescription = desiredState.columns | selectattr('id', "equalto", alterCurCol.id) | map(attribute='description') | first %}
-
-                {% set descriptionTest = currentDescription == desiredDescription %}
-
-                {% if descriptionTest == false %}
-                    {{ stage('Alter Dynamic Iceberg Table-Modify Column') }}
-                    ALTER DYNAMIC TABLE {{ desiredFullyQualifiedTargetDynamicTableName }}
-                    MODIFY COLUMN {{desiredColumnName}} COMMENT '{{desiredDescription }}'
-                {% endif %}
-
-            {% endif %}    
-        {% endfor %}
 
         {{ stage('Refresh Dynamic Iceberg Table') }}
         ALTER DYNAMIC TABLE {{ desiredFullyQualifiedTargetDynamicTableName }}

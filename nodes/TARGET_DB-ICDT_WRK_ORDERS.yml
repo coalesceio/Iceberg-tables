@@ -183,7 +183,7 @@ operation:
           - locationName: SOURCE_DATA
             nodeName: ORDERS
         join:
-          joinCondition: FROM {{ ref('SOURCE_DATA', 'ORDERS') }} "ORDERS" Where "O_ORDERKEY" = 9697;
+          joinCondition: FROM {{ ref('SOURCE_DATA', 'ORDERS') }} "ORDERS" Where "O_ORDERKEY" = 9697
         name: ICDT_WRK_ORDERS
         noLinkRefs: []
   name: ICDT_WRK_ORDERS
