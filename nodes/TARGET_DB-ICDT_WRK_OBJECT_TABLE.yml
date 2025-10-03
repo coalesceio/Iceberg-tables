@@ -48,7 +48,7 @@ operation:
           columnCounter: 2e18e904-f2cb-42ad-b8ad-01eef1e56692
           stepCounter: ae66f158-98c1-4b34-bfa2-058cd7b6966a
         config: {}
-        dataType: OBJECT(age number(38, 0), city string, name string)
+        dataType: OBJECT(empage number(38, 0), empcity string, empname string)
         description: ""
         name: DATA
         nullable: true

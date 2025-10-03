@@ -121,7 +121,7 @@ operation:
           columnCounter: 549f12ea-83c4-4a31-ba75-29af53bdb125
           stepCounter: e34bc6d2-8edc-4e0f-beee-9cc577558c63
         config: {}
-        dataType: VARCHAR(15)
+        dataType: VARCHAR(20)
         description: ""
         name: O_ORDERPRIORITY
         nullable: true
