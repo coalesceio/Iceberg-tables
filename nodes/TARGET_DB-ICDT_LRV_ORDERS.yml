@@ -36,7 +36,7 @@ operation:
         - {}
     refresh_mode: AUTO
     tgtLagSpecification: DOWNSTREAM
-    warehouseName: dev_wh_xs
+    warehouseName: compute_wh
   database: ""
   deployEnabled: true
   description: ""
