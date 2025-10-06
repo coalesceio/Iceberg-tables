@@ -8,8 +8,6 @@ operation:
     catint: icebergCatalogInt12
     cattable: test_iceberg
     extvolume: sficebergextvol1
-    fileNames: null
-    filePattern: null
     flagLoadHistorical: false
     flagSnowpipe: Enable Snowpipe
     metafilepath: ICTJSON/metadata/00001-02f36927-b4ed-4a6a-a9ae-f92fdb21a196.metadata.json
@@ -17,8 +15,6 @@ operation:
     schedulePeriodOption: Minutes
     schedulingMode: Warehouse Task
     schrefresh: true
-    stageName: null
-    stageStorageLocationName: null
     tcatalog: Object storage
     whName: COMPUTE_WH
   database: ""

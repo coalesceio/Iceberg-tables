@@ -1,0 +1,110 @@
+fileVersion: 1
+id: 44d93cf7-ae79-46a0-86aa-69cc2ffddc81
+name: ICDT_WRK_PRODUCT_INVENTORY_DANDT
+operation:
+  config:
+    baseLocation: WRK
+    clusterKey: true
+    clusterKeyConfig:
+      items:
+        - columnName:
+            columnCounter: fe06974f-ce8a-4144-ad32-490e3e095ce5
+            stepCounter: 44d93cf7-ae79-46a0-86aa-69cc2ffddc81
+    cpygrants: true
+    externalVolume: sficebergextvol1
+    groupByAll: true
+    initialize: ON_CREATE
+    insertStrategy: UNION ALL
+    lagSpecification:
+      items:
+        - {}
+    refresh_mode: AUTO
+    selectDistinct: false
+    tgtLagSpecification: DOWNSTREAM
+    warehouseName: dev_wh_xs
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: TARGET_DB
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: fe06974f-ce8a-4144-ad32-490e3e095ce5
+          stepCounter: 44d93cf7-ae79-46a0-86aa-69cc2ffddc81
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: PRODUCT_ID
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: ca6172f2-ec65-4ede-8d38-f89ea6f49da2
+                stepCounter: 52eff4f1-fbf9-4820-828d-88d7c6b5954b
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 483b73b7-2bd4-4d40-9c38-40f6b5320ec2
+          stepCounter: 44d93cf7-ae79-46a0-86aa-69cc2ffddc81
+        config: {}
+        dataType: VARCHAR(100)
+        description: ""
+        name: PRODUCT_NAME
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 1e608571-e756-46e8-9ca7-24efccad682e
+                stepCounter: 52eff4f1-fbf9-4820-828d-88d7c6b5954b
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: df0e4fa2-196d-451d-9045-d9410b804d0a
+          stepCounter: 44d93cf7-ae79-46a0-86aa-69cc2ffddc81
+        config: {}
+        dataType: DATE
+        description: ""
+        name: LAST_UPDATED_DATE
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 309e4baa-3934-428b-86a6-cec8a9014eb5
+                stepCounter: 52eff4f1-fbf9-4820-828d-88d7c6b5954b
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 47d6b7eb-aa0b-49b2-a12d-bdfc9f737e15
+          stepCounter: 44d93cf7-ae79-46a0-86aa-69cc2ffddc81
+        config: {}
+        dataType: TIME(9)
+        description: ""
+        name: LAST_UPDATED_TIME
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 257c45a3-d88c-4f81-ad4d-d379505c12f1
+                stepCounter: 52eff4f1-fbf9-4820-828d-88d7c6b5954b
+            transform: ""
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases:
+          PRODUCT_INVENTORY_DANDT: 52eff4f1-fbf9-4820-828d-88d7c6b5954b
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SOURCE_DATA
+            nodeName: PRODUCT_INVENTORY_DANDT
+        join:
+          joinCondition: FROM {{ ref('SOURCE_DATA', 'PRODUCT_INVENTORY_DANDT') }} "PRODUCT_INVENTORY_DANDT"
+        name: ICDT_WRK_PRODUCT_INVENTORY_DANDT
+        noLinkRefs: []
+  name: ICDT_WRK_PRODUCT_INVENTORY_DANDT
+  overrideSQL: false
+  schema: ""
+  sqlType: "565"
+  type: sql
+  version: 1
+type: Node

@@ -4,7 +4,6 @@ name: ICTCOPY_INFER_HEALTH_EX1
 operation:
   config:
     basename: HEALTHCSVICTEX1
-    catint: null
     clusterKey: true
     clusterKeyConfig:
       items:

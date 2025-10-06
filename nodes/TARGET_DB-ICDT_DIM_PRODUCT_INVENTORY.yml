@@ -1,0 +1,198 @@
+fileVersion: 1
+id: cc55b740-2dfd-4345-adf9-11f2d1e26f27
+name: ICDT_DIM_PRODUCT_INVENTORY
+operation:
+  config:
+    baseLocation: DIM
+    clusterKey: true
+    clusterKeyConfig:
+      items:
+        - columnName:
+            columnCounter: b76e360e-3c96-45b8-8db3-91c3fc6ee181
+            stepCounter: cc55b740-2dfd-4345-adf9-11f2d1e26f27
+    cpygrants: false
+    externalVolume: sficebergextvol1
+    initialize: ON_CREATE
+    lagSpecification:
+      items:
+        - {}
+    orderBy:
+      items:
+        - colName:
+            columnCounter: fe899f64-30d7-4b2e-81fc-48c035258d75
+            stepCounter: cc55b740-2dfd-4345-adf9-11f2d1e26f27
+    orderByDateTime:
+      items:
+        - {}
+    orderseq:
+      items:
+        - {}
+    partitionBy:
+      items:
+        - partColName:
+            columnCounter: b76e360e-3c96-45b8-8db3-91c3fc6ee181
+            stepCounter: cc55b740-2dfd-4345-adf9-11f2d1e26f27
+    recordVersioning: Datetime Column
+    recordorderBy:
+      items:
+        - {}
+    refresh_mode: AUTO
+    tgtLagSpecification: DOWNSTREAM
+    warehouseName: dev_wh_xs
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: TARGET_DB
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 49fc0659-5a75-46fc-a6be-5a3d4021aa45
+          stepCounter: cc55b740-2dfd-4345-adf9-11f2d1e26f27
+        config: {}
+        dataType: STRING
+        defaultValue: ""
+        description: ""
+        isSurrogateKey: true
+        name: ICDT_DIM_PRODUCT_INVENTORY_KEY
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: "{{ dimensionHistoryPk() }}"
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: b76e360e-3c96-45b8-8db3-91c3fc6ee181
+          stepCounter: cc55b740-2dfd-4345-adf9-11f2d1e26f27
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: PRODUCT_ID
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 2f1a076d-cd2d-4be5-b680-6471ce7c567d
+                stepCounter: 559bbcf8-2678-4282-94f9-df4d921eb515
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 71cfc81e-35a5-4f8d-8397-a2c521f59d87
+          stepCounter: cc55b740-2dfd-4345-adf9-11f2d1e26f27
+        config: {}
+        dataType: VARCHAR(100)
+        description: ""
+        name: PRODUCT_NAME
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: fd84ae38-7f61-4bf1-b1fd-f2857aad712f
+                stepCounter: 559bbcf8-2678-4282-94f9-df4d921eb515
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: fe899f64-30d7-4b2e-81fc-48c035258d75
+          stepCounter: cc55b740-2dfd-4345-adf9-11f2d1e26f27
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        description: ""
+        name: LAST_UPDATED_TS
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 123d15a7-11e3-4d86-b52f-f10a79bb0d46
+                stepCounter: 559bbcf8-2678-4282-94f9-df4d921eb515
+            transform: ""
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 5aaf689b-b0ea-4649-8882-2368a952f1ef
+          stepCounter: cc55b740-2dfd-4345-adf9-11f2d1e26f27
+        config: {}
+        dataType: TIMESTAMP
+        defaultValue: ""
+        description: ""
+        isSystemStartDate: true
+        name: RECORD_START_TIME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: "{% if config.recordVersioning not in ('Integer Column') %} {{ order_by_col().split(',')[0] }} {% else %} {{ order_by_col_int().split(',')[0] }} {% endif %}"
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: a03a0e5d-6702-49e9-b126-f2d5e48f41f3
+          stepCounter: cc55b740-2dfd-4345-adf9-11f2d1e26f27
+        config: {}
+        dataType: TIMESTAMP
+        defaultValue: ""
+        description: ""
+        isSystemEndDate: true
+        name: RECORD_END_TIME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: LEAD ( {% if config.recordVersioning not in ('Integer Column')%} {{ order_by_col().split(',')[0] }} {% else %} {{ order_by_col_int().split(',')[0] }} {% endif %} ) OVER (PARTITION BY {{ partition_by() }} ORDER BY {{ order_by_col() }} asc)
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 0474179b-fbf3-4db8-9ae8-e2a5ec3a068c
+          stepCounter: cc55b740-2dfd-4345-adf9-11f2d1e26f27
+        config: {}
+        dataType: NUMBER(1, 0)
+        defaultValue: ""
+        description: ""
+        isRecordCurrent: true
+        name: RECORD_CURRENT_FLAG
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: CASE WHEN ( LEAD ( {% if config.recordVersioning not in ('Integer Column') %} {{ order_by_col().split(',')[0] }} {% else %} {{ order_by_col_int().split(',')[0] }} {% endif %} ) OVER (PARTITION BY {{ partition_by() }} ORDER BY {{ order_by_col() }} asc) ) IS NULL THEN 1 ELSE 0 END
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 08690c11-a187-4678-ab22-c7243f180ae7
+          stepCounter: cc55b740-2dfd-4345-adf9-11f2d1e26f27
+        config: {}
+        dataType: TIMESTAMP
+        defaultValue: ""
+        description: ""
+        name: RECORD_CREATED_DATE
+        nullable: true
+        recordCreated: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: FIRST_VALUE ( {% if config.recordVersioning not in ('Integer Column') %} {{ order_by_col().split(',')[0] }} {% else %} {{ order_by_col_int().split(',')[0] }} {% endif %} ) OVER (PARTITION BY {{ partition_by() }} ORDER BY {{ order_by_col() }} asc)
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases:
+          PRODUCT_INVENTORY: ad6e6d8f-1ad6-4340-8afb-e37935a34019
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SOURCE_DATA
+            nodeName: PRODUCT_INVENTORY
+        join:
+          joinCondition: FROM {{ ref('SOURCE_DATA', 'PRODUCT_INVENTORY') }} "PRODUCT_INVENTORY"
+        name: ICDT_DIM_PRODUCT_INVENTORY
+        noLinkRefs: []
+  name: ICDT_DIM_PRODUCT_INVENTORY
+  overrideSQL: false
+  schema: ""
+  sqlType: "566"
+  type: sql
+  version: 1
+type: Node

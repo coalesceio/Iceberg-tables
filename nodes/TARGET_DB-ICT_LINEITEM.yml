@@ -4,7 +4,7 @@ name: ICT_LINEITEM
 operation:
   config:
     basename: LITEMOBJ
-    catint: null
+    catint: ""
     clusterKey: false
     clusterKeyConfig:
       items:

@@ -1,0 +1,226 @@
+fileVersion: 1
+id: a75ae149-2737-420b-8f53-81c3d8986188
+name: ICDT_DIM_PRODUCT_INVENTORY_INT
+operation:
+  config:
+    baseLocation: DIM
+    clusterKey: false
+    clusterKeyConfig:
+      items:
+        - {}
+    cpygrants: false
+    externalVolume: sficebergextvol1
+    initialize: ON_CREATE
+    lagSpecification:
+      items:
+        - {}
+    orderBy:
+      items:
+        - {}
+    orderByDateTime:
+      items:
+        - {}
+    orderseq:
+      items:
+        - colNameseq:
+            columnCounter: 0ef79e5e-960d-4632-87d5-ee8b2a2b6712
+            stepCounter: a75ae149-2737-420b-8f53-81c3d8986188
+    partitionBy:
+      items:
+        - partColName:
+            columnCounter: 8846ac52-5159-4bc3-8b54-5ea60c7fcec3
+            stepCounter: a75ae149-2737-420b-8f53-81c3d8986188
+    recordVersioning: Integer Column
+    recordorderBy:
+      items:
+        - ocolName:
+            columnCounter: 16fae83b-ae16-4de0-abd7-fdd22104bfdb
+            stepCounter: a75ae149-2737-420b-8f53-81c3d8986188
+    refresh_mode: AUTO
+    tgtLagSpecification: DOWNSTREAM
+    warehouseName: dev_wh_xs
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: TARGET_DB
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 4aa909e6-953c-4801-9eb7-fadfcf0ca874
+          stepCounter: a75ae149-2737-420b-8f53-81c3d8986188
+        config: {}
+        dataType: STRING
+        defaultValue: ""
+        description: ""
+        isSurrogateKey: true
+        name: ICDT_DIM_PRODUCT_INVENTORY_INT_KEY
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: "{{ dimensionHistoryPk() }}"
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 8846ac52-5159-4bc3-8b54-5ea60c7fcec3
+          stepCounter: a75ae149-2737-420b-8f53-81c3d8986188
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: PRODUCT_ID
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 8758edae-c7d0-4aab-9eb4-fb763b236061
+                stepCounter: e5abf676-2bee-4d73-81b1-55e08c6df648
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 0ef79e5e-960d-4632-87d5-ee8b2a2b6712
+          stepCounter: a75ae149-2737-420b-8f53-81c3d8986188
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: STOCK_QUANTITY
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: aa384a83-9a66-4c82-aa83-4c3a6c12d880
+                stepCounter: e5abf676-2bee-4d73-81b1-55e08c6df648
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 79a50609-95c3-4f15-b0d5-8547b4a1a6d6
+          stepCounter: a75ae149-2737-420b-8f53-81c3d8986188
+        config: {}
+        dataType: NUMBER(10,2)
+        description: ""
+        name: UNIT_PRICE
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: f91ed7e6-4a9f-4aa0-95a0-3b9db53710f6
+                stepCounter: e5abf676-2bee-4d73-81b1-55e08c6df648
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: e9f6a347-cf3d-4809-9e25-aa739d5e563d
+          stepCounter: a75ae149-2737-420b-8f53-81c3d8986188
+        config: {}
+        dataType: VARCHAR(100)
+        description: ""
+        name: PRODUCT_NAME
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 4ea92770-b773-4af7-a929-300779b41c32
+                stepCounter: e5abf676-2bee-4d73-81b1-55e08c6df648
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 16fae83b-ae16-4de0-abd7-fdd22104bfdb
+          stepCounter: a75ae149-2737-420b-8f53-81c3d8986188
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        description: ""
+        name: LAST_UPDATED_TS
+        nullable: false
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 9ecf9c63-0710-4eb7-b59b-559460e524b5
+                stepCounter: e5abf676-2bee-4d73-81b1-55e08c6df648
+            transform: ""
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 4f56cdb6-5c45-474b-9283-37440d689e79
+          stepCounter: a75ae149-2737-420b-8f53-81c3d8986188
+        config: {}
+        dataType: TIMESTAMP
+        defaultValue: ""
+        description: ""
+        isSystemStartDate: true
+        name: RECORD_START_TIME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: "{% if config.recordVersioning not in ('Integer Column') %} {{ order_by_col().split(',')[0] }} {% else %} {{ order_by_col_int().split(',')[0] }} {% endif %}"
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 540bf78f-ff74-4ec0-83d1-dd649072bba2
+          stepCounter: a75ae149-2737-420b-8f53-81c3d8986188
+        config: {}
+        dataType: TIMESTAMP
+        defaultValue: ""
+        description: ""
+        isSystemEndDate: true
+        name: RECORD_END_TIME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: LEAD ( {% if config.recordVersioning not in ('Integer Column')%} {{ order_by_col().split(',')[0] }} {% else %} {{ order_by_col_int().split(',')[0] }} {% endif %} ) OVER (PARTITION BY {{ partition_by() }} ORDER BY {{ order_by_col() }} asc)
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: c37ee7ae-6b21-4511-8887-47c822028ae0
+          stepCounter: a75ae149-2737-420b-8f53-81c3d8986188
+        config: {}
+        dataType: NUMBER(1, 0)
+        defaultValue: ""
+        description: ""
+        isRecordCurrent: true
+        name: RECORD_CURRENT_FLAG
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: CASE WHEN ( LEAD ( {% if config.recordVersioning not in ('Integer Column') %} {{ order_by_col().split(',')[0] }} {% else %} {{ order_by_col_int().split(',')[0] }} {% endif %} ) OVER (PARTITION BY {{ partition_by() }} ORDER BY {{ order_by_col() }} asc) ) IS NULL THEN 1 ELSE 0 END
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 99bc2bcf-5d0e-455e-a0d0-ee309ed32094
+          stepCounter: a75ae149-2737-420b-8f53-81c3d8986188
+        config: {}
+        dataType: TIMESTAMP
+        defaultValue: ""
+        description: ""
+        name: RECORD_CREATED_DATE
+        nullable: true
+        recordCreated: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: FIRST_VALUE ( {% if config.recordVersioning not in ('Integer Column') %} {{ order_by_col().split(',')[0] }} {% else %} {{ order_by_col_int().split(',')[0] }} {% endif %} ) OVER (PARTITION BY {{ partition_by() }} ORDER BY {{ order_by_col() }} asc)
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases:
+          PRODUCT_INVENTORY_INT: e5abf676-2bee-4d73-81b1-55e08c6df648
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SOURCE_DATA
+            nodeName: PRODUCT_INVENTORY_INT
+        join:
+          joinCondition: FROM {{ ref('SOURCE_DATA', 'PRODUCT_INVENTORY_INT') }} "PRODUCT_INVENTORY_INT"
+        name: ICDT_DIM_PRODUCT_INVENTORY_INT
+        noLinkRefs: []
+  name: ICDT_DIM_PRODUCT_INVENTORY_INT
+  overrideSQL: false
+  schema: ""
+  sqlType: "566"
+  type: sql
+  version: 1
+type: Node

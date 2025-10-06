@@ -3,7 +3,6 @@ id: 22b892f4-9948-4829-b187-e567543c86d3
 name: ICT_COPY_SPJSON
 operation:
   config:
-    awsSnsTopic: null
     basename: ictjsoneg
     catint: ""
     cloudProvider: AWS
@@ -33,7 +32,6 @@ operation:
     flagLoadHistorical: true
     flagSnowpipe: Enable Snowpipe
     forceLoad: ""
-    integration: null
     intextstage: true
     loadUncertainFiles: ""
     onError: ""

@@ -1,0 +1,92 @@
+fileVersion: 1
+id: 52eff4f1-fbf9-4820-828d-88d7c6b5954b
+name: PRODUCT_INVENTORY_DANDT
+operation:
+  database: ""
+  deployEnabled: true
+  description: ""
+  locationName: SOURCE_DATA
+  metadata:
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: ca6172f2-ec65-4ede-8d38-f89ea6f49da2
+          stepCounter: 52eff4f1-fbf9-4820-828d-88d7c6b5954b
+        config: {}
+        dataType: NUMBER(38,0)
+        defaultValue: ""
+        description: ""
+        name: PRODUCT_ID
+        nullable: false
+        primaryKey: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 1e608571-e756-46e8-9ca7-24efccad682e
+          stepCounter: 52eff4f1-fbf9-4820-828d-88d7c6b5954b
+        config: {}
+        dataType: VARCHAR(100)
+        defaultValue: ""
+        description: ""
+        name: PRODUCT_NAME
+        nullable: false
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 309e4baa-3934-428b-86a6-cec8a9014eb5
+          stepCounter: 52eff4f1-fbf9-4820-828d-88d7c6b5954b
+        config: {}
+        dataType: DATE
+        defaultValue: ""
+        description: ""
+        name: LAST_UPDATED_DATE
+        nullable: false
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 257c45a3-d88c-4f81-ad4d-d379505c12f1
+          stepCounter: 52eff4f1-fbf9-4820-828d-88d7c6b5954b
+        config: {}
+        dataType: TIME(9)
+        defaultValue: ""
+        description: ""
+        name: LAST_UPDATED_TIME
+        nullable: false
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+  name: PRODUCT_INVENTORY_DANDT
+  schema: ""
+  sqlType: Source
+  type: sourceInput
+  version: 1
+type: Node

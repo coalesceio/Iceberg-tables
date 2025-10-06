@@ -13,7 +13,7 @@ operation:
     scheduleCRON: 5 0-23 * * * America/Los_Angeles
     schedulePeriod: "6000"
     schedulePeriodOption: Minutes
-    schedulingMode: Serverless Task
+    schedulingMode: Warehouse Task
     schrefresh: true
     serverlessSize: MEDIUM
     tcatalog: Object storage
