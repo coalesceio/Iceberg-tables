@@ -6,6 +6,9 @@ The Iceberg Tables Package includes:
 * [External Iceberg table](#external-iceberg-table)
 * [Copy-Into Iceberg table](#copy-into-iceberg-table)
 * [Snowpipe Iceberg table](#snowpipe-iceberg-table)
+* [Dynamic Iceberg Work table](#Dynamic-Iceberg-Work-table)
+* [Dynamic Iceberg Dimension table](#Dynamic-Iceberg-Dimension-table)
+* [Dynamic Iceberg Latest Record Version table](#Dynamic-Iceberg-Latest-Record-Version-table)
 * [Code](#code)
 
 ## Snowflake Iceberg Table
@@ -31,7 +34,7 @@ The Snowflake Iceberg table has two configuration groups:
 
 | **Property** | **Description** |
 |----------|-------------|
-| **Storage Location (required)** | Storage Location where the Dynamic Table will be created |
+| **Storage Location (required)** | Storage Location where the Iceberg Table will be created |
 | **Node Type (required)** | Name of template used to create node objects |
 | **Description** | A description of the node's purpose |
 | **Deploy Enabled (required)** | If TRUE the node will be deployed or redeployed when changes are detected.<br/>If FALSE the node will not be deployed or the node will be dropped during redeployment |
@@ -54,7 +57,7 @@ When deployed for the first time into an environment the node will execute the f
 
 | **Stage** | **Description** |
 |-------|-------------|
-| **Create Iceberg Table** | This stage will execute a `CREATE` OR `REPLACE` statement and create a Dynamic Table in the target environment |
+| **Create Iceberg Table** | This stage will execute a `CREATE` OR `REPLACE` statement and create a Iceberg Table in the target environment |
 
 #### Snowflake Iceberg Redeployment
 
@@ -67,7 +70,7 @@ Any changes in config options will result in recreating the table during redeplo
 
 | **Stage** | **Description** |
 |-------|-------------|
-| **Create or Replace Iceberg Table** | This stage will execute a `CREATE` OR `REPLACE` statement and create a Dynamic Table in the target environment |
+| **Create or Replace Iceberg Table** | This stage will execute a `CREATE` OR `REPLACE` statement and create a Iceberg Table in the target environment |
 
 ##### Snowflake Iceberg Alter Structured Data Type
 
@@ -115,7 +118,7 @@ You can use this option to create an Iceberg table registered in the AWS Glue Da
 
 | **Property** | **Description** |
 |-------------|-----------------|
-| **Storage Location** (required) | Storage Location where the Dynamic Table will be created. |
+| **Storage Location** (required) | Storage Location where the Iceberg Table will be created. |
 | **Node Type** (required) | Name of template used to create node objects. |
 | **Description** | A description of the node's purpose. |
 | **Deploy Enabled** (required) | If TRUE the node will be deployed or redeployed when changes are detected.<br/>If FALSE the node will not be deployed or the node will be dropped during redeployment. |
@@ -282,7 +285,7 @@ An Iceberg table uses the Apache Iceberg open table format specification, which 
 
 | **Property** | **Description** |
 |----------|-------------|
-| **Storage Location (required)** | Storage Location where the Dynamic Table will be created |
+| **Storage Location (required)** | Storage Location where the Iceberg Table will be created |
 | **Node Type (required)** | Name of template used to create node objects |
 | **Description** | A description of the node's purpose |
 | **Deploy Enabled (required)** | If TRUE the node will be deployed or redeployed when changes are detected.<br/>If FALSE the node will not be deployed or the node will be dropped during redeployment |
@@ -467,7 +470,7 @@ This means you can load data from files in micro-batches, making it available to
 
 | **Property** | **Description** |
 |----------|-------------|
-| **Storage Location (required)** | Storage Location where the Dynamic Table will be created |
+| **Storage Location (required)** | Storage Location where the Iceberg Table will be created |
 | **Node Type (required)** | Name of template used to create node objects |
 | **Description** | A description of the node's purpose |
 | **Deploy Enabled (required)** | If TRUE the node will be deployed or redeployed when changes are detected.<br/>If FALSE the node will not be deployed or the node will be dropped during redeployment |
@@ -677,6 +680,415 @@ This is executed in two stages:
 | **Drop Table** | Target table is dropped |
 | **Drop Pipe** | Pipe is dropped |
 
+## Dynamic Iceberg Work Table
+
+[**Dynamic Iceberg tables**](https://docs.snowflake.com/en/user-guide/dynamic-tables-create-iceberg) combine the benefits of dynamic tables and Snowflake-managed Iceberg tables, offering features like external cloud storage management, automated data transformation, and performance optimization.
+
+Dynamic Iceberg tables integrate with data lakes, which let you store data in external cloud storage such as AWS S3 or Azure Blob Storage while being managed by Snowflake. These tables support ACID transactions, schema evolution, hidden partitioning, and table snapshots. Tasks. 
+
+### Dynamic Iceberg Work Node Prerequisites
+
+* The Role mentioned in the Workspace and Environment properties of Coalesce should be ACCOUNTADMIN in order to successfully create an Iceberg table.
+* An EXTERNAL VOLUME is expected to be created in Snowflake at the Storage Location chosen in the Node properties.
+* In case of creating a Snowflake Iceberg table with structured column types like OBJECT, MAP, or ARRAY, ensure the data type is updated with the appropriate structure. For example, if the source Snowflake table has OBJECT data type, then the data type of the same column in the Iceberg table node added on top is expected to be structured type OBJECT (age string, id number) based on the data it has.
+
+### Dynamic Iceberg Work Node Configuration
+
+The Dynamic Iceberg table has three configuration groups:
+
+* [Dynamic Iceberg Node Properties](#Dynamic-iceberg-work-node-properties)
+* [Dynamic Iceberg Options](#Dynamic-iceberg-options)
+* [General Options](#general-options)
+
+#### Dynamic Iceberg Work Node Properties
+
+| **Property** | **Description** |
+|----------|-------------|
+| **Storage Location (required)** | Storage Location where the Iceberg Table will be created |
+| **Node Type (required)** | Name of template used to create node objects |
+| **Deploy Enabled (required)** | If TRUE the node will be deployed or redeployed when changes are detected.<br/>If FALSE the node will not be deployed or the node will be dropped during redeployment |
+
+#### Dynamic Iceberg Options
+
+| **Option** | **Description** |
+|--------|-------------|
+| **Warehouse** | (Required) Name of warehouse used to refresh the Dynamic Table |
+| **Snowflake EXTERNAL VOLUME name** | Specifies the identifier (name) for the external volume where the Iceberg table stores its metadata files and data in Parquet format. [External volume](https://docs.snowflake.com/sql-reference/sql/create-external-volume) needs to be created in snowflake as a prerequisite |
+| **Base location name** | The path to a directory where Snowflake can write data and metadata files for the table. Specify a relative path from the table's EXTERNAL_VOLUME location |
+| **[Target Lag Specification](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh)** | - **Time Based**<br/> - **Downstream**<br/>Set Time Based refresh schedule with:<br/>- **Time Value**: Frequency of refresh for a given Time Period.<br/>- **Time Period**: Seconds/Minutes/Hours/Days |
+| **Refresh_Mode** | - **AUTO**: Default incremental refresh. If the CREATE DYNAMIC TABLE statement does not support the incremental refresh mode, the dynamic table is automatically created with the full refresh mode.<br/>- **INCREMENTAL**: Force incremental refresh<br/>- **FULL**: Force full refresh |
+| **Initialize** | - **ON_CREATE**: Refresh synchronously at creation<br/>- **ON_SCHEDULE**: Refresh at next scheduled time |
+| **Copy Grants** | Specifies to retain the access privileges from the original table when a new dynamic table is created. Useful during [replication](https://docs.snowflake.com/en/user-guide/account-replication-considerations#replication-and-dynamic-tables) |
+| **Cluster key** | True/False to determine whether the Iceberg table is to be clustered or not<br/>***True** - Allows you to specify the column based on which clustering is to be done.<br/>* **Allow Expressions Cluster Key** - True allows to add an expression to the specified cluster key<br/>* **False** - No clustering done |
+
+#### General Options
+
+| **Option** | **Description** |
+|------------|----------------|
+| **Distinct** | True/False toggle to return DISTINCT rows |
+| **Group By All** | True/False toggle to add non-aggregated columns to GROUP BY |
+| **Multi Source** | True/False toggle for combining multiple sources via UNION or UNION ALL |
+
+### Dynamic Iceberg Work Deployment
+
+#### Initial Deployment Parameters
+
+The Dynamic Table Work includes an environment parameter that allows you to specify a different warehouse to refresh a Dynamic Table in different environments.
+
+The parameter name is `targetDynamicTableWarehouse` and the default value is `DEV ENVIRONMENT`.
+
+When set to `DEV ENVIRONMENT`, the value entered in the Dynamic Table Options config "Warehouse on which to execute Dynamic Table" will be used when creating the Dynamic Table.
+
+```json
+{
+    "targetDynamicTableWarehouse": "DEV ENVIRONMENT"
+}
+```
+
+When set to any value other than `DEV ENVIRONMENT` the node will attempt to create the Dynamic Table using a Snowflake warehouse with the specified value.
+
+For example, the Dynamic Table will refresh using a warehouse named `compute_wh`.
+
+```json
+{
+    "targetDynamicTableWarehouse": "compute_wh"
+}
+```
+> 📘 **Deployment of nodes without adding parameters**
+>
+> This results in a WARNING stage getting executed insisting to execute the node after adding parameters
+
+#### Dynamic Iceberg Work Initial Deployment
+
+When deployed for the first time into an environment the node will execute the following stage:
+
+| **Stage** | **Description** |
+|-------|-------------|
+| **Create Dynamic Iceberg Table** | This stage will execute a `CREATE` OR `REPLACE` statement and create a Dynamic Iceberg Table in the target environment |
+
+#### Dynamic Iceberg Work Redeployment
+
+Any changes in config options will result in recreating the table during redeployment.
+
+* `EXTERNAL VOLUME`
+* `Base location name`
+* `Node Properties`
+* `Column Name`
+* `Join`
+* `Transform`
+
+| **Stage** | **Description** |
+|-------|-------------|
+| **Create or Replace Dynamic Iceberg Table** | This stage will execute a `CREATE` OR `REPLACE` statement and create a Iceberg Table in the target environment |
+
+#### Altering the Dynamic Iceberg Table Work
+
+The following config changes trigger ALTER statements:
+
+1. Warehouse name
+2. Target Lag
+3. Time based Lag specification
+4. Cluster Key
+5. Table description
+6. Column description
+7. Node rename
+8. Storage location change
+
+These execute the two stages:
+
+| **Stage** | **Description** |
+|-----------|----------------|
+| **Alter Dynamic Table** | Executes ALTER to modify parameters |
+| **Refresh Dynamic Table** | Refreshes table to make data available |
+
+Other column or table level changes like data type change, column name change, column addition/deletion result in a `CREATE` statement.
+
+### Redeployment with no changes 
+
+If the nodes are redeployed with no changes compared to previous deployment,then no stages are executed
+
+### Dynamic Iceberg Work Undeployment
+
+If a Dynamic Iceberg Work table is dropped from the workspace and commited to Git results in table dropped from target environment.
+
+| **Stage** | **Description** |
+|-------|-------------|
+| **Drop Dynamic Table** | Removes the Iceberg table from the target environment |
+
+## Dynamic Iceberg Dimension Table
+
+[**Dynamic Iceberg tables**](https://docs.snowflake.com/en/user-guide/dynamic-tables-create-iceberg) combine the benefits of dynamic tables and Snowflake-managed Iceberg tables, offering features like external cloud storage management, automated data transformation, and performance optimization.
+
+Dynamic Iceberg tables integrate with data lakes, which let you store data in external cloud storage such as AWS S3 or Azure Blob Storage while being managed by Snowflake. These tables support ACID transactions, schema evolution, hidden partitioning, and table snapshots. Tasks. 
+
+### Dynamic Iceberg Dimension Node Prerequisites
+
+* The Role mentioned in the Workspace and Environment properties of Coalesce should be ACCOUNTADMIN in order to successfully create an Iceberg table.
+* An EXTERNAL VOLUME is expected to be created in Snowflake at the Storage Location chosen in the Node properties.
+
+### Dynamic Iceberg Dimension Node Configuration
+
+The Dynamic Iceberg table has three configuration groups:
+
+* [Dynamic Iceberg Node Properties](#Dynamic-iceberg-dimension-node-properties)
+* [Dynamic Iceberg Options](#Dynamic-iceberg-options-1)
+* [Dimension Options](#dimension-options)
+
+#### Dynamic Iceberg Dimension Node Properties
+
+| **Property** | **Description** |
+|----------|-------------|
+| **Storage Location (required)** | Storage Location where the Iceberg Table will be created |
+| **Node Type (required)** | Name of template used to create node objects |
+| **Deploy Enabled (required)** | If TRUE the node will be deployed or redeployed when changes are detected.<br/>If FALSE the node will not be deployed or the node will be dropped during redeployment |
+
+#### Dynamic Iceberg Options
+
+| **Option** | **Description** |
+|--------|-------------|
+| **Warehouse** | (Required) Name of warehouse used to refresh the Dynamic Table |
+| **Snowflake EXTERNAL VOLUME name** | Specifies the identifier (name) for the external volume where the Iceberg table stores its metadata files and data in Parquet format. [External volume](https://docs.snowflake.com/sql-reference/sql/create-external-volume) needs to be created in snowflake as a prerequisite |
+| **Base location name** | The path to a directory where Snowflake can write data and metadata files for the table. Specify a relative path from the table's EXTERNAL_VOLUME location |
+| **[Target Lag Specification](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh)** | - **Time Based**<br/> - **Downstream**<br/>Set Time Based refresh schedule with:<br/>- **Time Value**: Frequency of refresh for a given Time Period.<br/>- **Time Period**: Seconds/Minutes/Hours/Days |
+| **Refresh_Mode** | - **AUTO**: Default incremental refresh. If the CREATE DYNAMIC TABLE statement does not support the incremental refresh mode, the dynamic table is automatically created with the full refresh mode.<br/>- **INCREMENTAL**: Force incremental refresh<br/>- **FULL**: Force full refresh |
+| **Initialize** | - **ON_CREATE**: Refresh synchronously at creation<br/>- **ON_SCHEDULE**: Refresh at next scheduled time |
+| **Copy Grants** | Specifies to retain the access privileges from the original table when a new dynamic table is created. Useful during [replication](https://docs.snowflake.com/en/user-guide/account-replication-considerations#replication-and-dynamic-tables) |
+| **Cluster key** | True/False to determine whether the Iceberg table is to be clustered or not<br/>***True** - Allows you to specify the column based on which clustering is to be done.<br/>* **Allow Expressions Cluster Key** - True allows to add an expression to the specified cluster key<br/>* **False** - No clustering done |
+
+#### Dimension Options
+
+| **Option** | **Description** |
+|------------|----------------|
+| **Table keys** | (Required) Business key columns for Dimension key formation |
+| **Record versioning** | (Required) Type of column for history maintenance:<br/>- **Datetime column**<br/>- **Date and Time column**<br/>- **Integer column** |
+| **Timestamp** | Required if Datetime column chosen for Record versioning.<br/>**Note**: If multiple columns are chosen.The first timestamp column chosen is considered for versioning order |
+| **Sequence** | Required if Integer column chosen for Record versioning|
+| **Timetamp-track data load**| Required if Integer column chosen for Record versioning<br/>**Note**: If multiple columns are chosen.The first timestamp column chosen is considered for versioning order |
+| **Date/Timestamp Columns** | Required if Date and Time columns chosen for Record versioning<br/>**Note**: If multiple columns are chosen.The first timestamp column chosen is considered for versioning order |
+
+### Dynamic Iceberg Dimension Deployment
+
+#### Initial Deployment Parameters
+
+The Dynamic Table Work includes an environment parameter that allows you to specify a different warehouse to refresh a Dynamic Table in different environments.
+
+The parameter name is `targetDynamicTableWarehouse` and the default value is `DEV ENVIRONMENT`.
+
+When set to `DEV ENVIRONMENT`, the value entered in the Dynamic Table Options config "Warehouse on which to execute Dynamic Table" will be used when creating the Dynamic Table.
+
+```json
+{
+    "targetDynamicTableWarehouse": "DEV ENVIRONMENT"
+}
+```
+
+When set to any value other than `DEV ENVIRONMENT` the node will attempt to create the Dynamic Table using a Snowflake warehouse with the specified value.
+
+For example, the Dynamic Table will refresh using a warehouse named `compute_wh`.
+
+```json
+{
+    "targetDynamicTableWarehouse": "compute_wh"
+}
+```
+> 📘 **Deployment of nodes without adding parameters**
+>
+> This results in a WARNING stage getting executed insisting to execute the node after adding parameters
+
+#### Dynamic Iceberg Dimension Initial Deployment
+
+When deployed for the first time into an environment the node will execute the following stage:
+
+| **Stage** | **Description** |
+|-------|-------------|
+| **Create Dynamic Iceberg Table** | This stage will execute a `CREATE` OR `REPLACE` statement and create a Dynamic Iceberg Table in the target environment |
+
+#### Dynamic Iceberg Dimension Redeployment
+
+Any changes in config options will result in recreating the table during redeployment.
+
+* `EXTERNAL VOLUME`
+* `Base location name`
+* `Node Properties`
+* `Column Name`
+* `Join`
+* `Transform`
+
+| **Stage** | **Description** |
+|-------|-------------|
+| **Create or Replace Dynamic Iceberg Table** | This stage will execute a `CREATE` OR `REPLACE` statement and create a Iceberg Table in the target environment |
+
+#### Altering the Dynamic Iceberg Table Dimension
+
+The following config changes trigger ALTER statements:
+
+1. Warehouse name
+2. Target Lag
+3. Time based Lag specification
+4. Cluster Key
+5. Table description
+6. Column description
+7. Node rename
+8. Storage location change
+
+These execute the two stages:
+
+| **Stage** | **Description** |
+|-----------|----------------|
+| **Alter Dynamic Table** | Executes ALTER to modify parameters |
+| **Refresh Dynamic Table** | Refreshes table to make data available |
+
+Other column or table level changes like data type change, column name change, column addition/deletion result in a `CREATE` statement.
+
+#### Redeployment with no changes 
+
+If the nodes are redeployed with no changes compared to previous deployment,then no stages are executed
+
+### Dynamic Iceberg Dimension Undeployment
+
+If a Dynamic Iceberg Dimension table is dropped from the workspace and commited to Git results in table dropped from target environment.
+
+| **Stage** | **Description** |
+|-------|-------------|
+| **Drop Dynamic Table** | Removes the Iceberg table from the target environment |
+
+## Dynamic Iceberg Latest Record Version Table
+
+[**Dynamic Iceberg tables**](https://docs.snowflake.com/en/user-guide/dynamic-tables-create-iceberg) combine the benefits of dynamic tables and Snowflake-managed Iceberg tables, offering features like external cloud storage management, automated data transformation, and performance optimization.
+
+Dynamic Iceberg tables integrate with data lakes, which let you store data in external cloud storage such as AWS S3 or Azure Blob Storage while being managed by Snowflake. These tables support ACID transactions, schema evolution, hidden partitioning, and table snapshots. Tasks. 
+
+### Dynamic Iceberg Latest Record Version Node Prerequisites
+
+* The Role mentioned in the Workspace and Environment properties of Coalesce should be ACCOUNTADMIN in order to successfully create an Iceberg table.
+* An EXTERNAL VOLUME is expected to be created in Snowflake at the Storage Location chosen in the Node properties.
+
+### Dynamic Iceberg Latest Record Version Node Configuration
+
+The Dynamic Iceberg table has three configuration groups:
+
+* [Dynamic Iceberg Node Properties](#Dynamic-iceberg-node-properties)
+* [Dynamic Iceberg Options](#Dynamic-iceberg-options-2)
+* [Latest Record Version Options](#Latest-Record-Version-options)
+
+#### Dynamic Iceberg Node Properties
+
+| **Property** | **Description** |
+|----------|-------------|
+| **Storage Location (required)** | Storage Location where the Iceberg Table will be created |
+| **Node Type (required)** | Name of template used to create node objects |
+| **Deploy Enabled (required)** | If TRUE the node will be deployed or redeployed when changes are detected.<br/>If FALSE the node will not be deployed or the node will be dropped during redeployment |
+
+#### Dynamic Iceberg Options
+
+| **Option** | **Description** |
+|--------|-------------|
+| **Warehouse** | (Required) Name of warehouse used to refresh the Dynamic Table |
+| **Snowflake EXTERNAL VOLUME name** | Specifies the identifier (name) for the external volume where the Iceberg table stores its metadata files and data in Parquet format. [External volume](https://docs.snowflake.com/sql-reference/sql/create-external-volume) needs to be created in snowflake as a prerequisite |
+| **Base location name** | The path to a directory where Snowflake can write data and metadata files for the table. Specify a relative path from the table's EXTERNAL_VOLUME location |
+| **[Target Lag Specification](https://docs.snowflake.com/en/user-guide/dynamic-tables-refresh)** | - **Time Based**<br/> - **Downstream**<br/>Set Time Based refresh schedule with:<br/>- **Time Value**: Frequency of refresh for a given Time Period.<br/>- **Time Period**: Seconds/Minutes/Hours/Days |
+| **Refresh_Mode** | - **AUTO**: Default incremental refresh. If the CREATE DYNAMIC TABLE statement does not support the incremental refresh mode, the dynamic table is automatically created with the full refresh mode.<br/>- **INCREMENTAL**: Force incremental refresh<br/>- **FULL**: Force full refresh |
+| **Initialize** | - **ON_CREATE**: Refresh synchronously at creation<br/>- **ON_SCHEDULE**: Refresh at next scheduled time |
+| **Copy Grants** | Specifies to retain the access privileges from the original table when a new dynamic table is created. Useful during [replication](https://docs.snowflake.com/en/user-guide/account-replication-considerations#replication-and-dynamic-tables) |
+| **Cluster key** | True/False to determine whether the Iceberg table is to be clustered or not<br/>***True** - Allows you to specify the column based on which clustering is to be done.<br/>* **Allow Expressions Cluster Key** - True allows to add an expression to the specified cluster key<br/>* **False** - No clustering done |
+
+#### Latest Record Version Options
+
+| **Option** | **Description** |
+|------------|----------------|
+| **Table keys** | (Required) Business key columns for Latest Record Version key formation |
+| **Record versioning** | (Required) Type of column for history maintenance:<br/>- **Datetime column**<br/>- **Date and Time column**<br/>- **Integer column** |
+| **Timestamp** | Required if Datetime column chosen for Record versioning.<br/>**Note**: If multiple columns are chosen.The first timestamp column chosen is considered for versioning order |
+| **Sequence** | Required if Integer column chosen for Record versioning|
+| **Timetamp-track data load**| Required if Integer column chosen for Record versioning<br/>**Note**: If multiple columns are chosen.The first timestamp column chosen is considered for versioning order |
+| **Date/Timestamp Columns** | Required if Date and Time columns chosen for Record versioning<br/>**Note**: If multiple columns are chosen.The first timestamp column chosen is considered for versioning order |
+
+### Dynamic Iceberg Latest Record Version Deployment
+
+#### Initial Deployment Parameters
+
+The Dynamic Table Work includes an environment parameter that allows you to specify a different warehouse to refresh a Dynamic Table in different environments.
+
+The parameter name is `targetDynamicTableWarehouse` and the default value is `DEV ENVIRONMENT`.
+
+When set to `DEV ENVIRONMENT`, the value entered in the Dynamic Table Options config "Warehouse on which to execute Dynamic Table" will be used when creating the Dynamic Table.
+
+```json
+{
+    "targetDynamicTableWarehouse": "DEV ENVIRONMENT"
+}
+```
+
+When set to any value other than `DEV ENVIRONMENT` the node will attempt to create the Dynamic Table using a Snowflake warehouse with the specified value.
+
+For example, the Dynamic Table will refresh using a warehouse named `compute_wh`.
+
+```json
+{
+    "targetDynamicTableWarehouse": "compute_wh"
+}
+```
+> 📘 **Deployment of nodes without adding parameters**
+>
+> This results in a WARNING stage getting executed insisting to execute the node after adding parameters
+
+#### Dynamic Iceberg Latest Record Version Initial Deployment
+
+When deployed for the first time into an environment the node will execute the following stage:
+
+| **Stage** | **Description** |
+|-------|-------------|
+| **Create Dynamic Iceberg Table** | This stage will execute a `CREATE` OR `REPLACE` statement and create a Dynamic Iceberg Table in the target environment |
+
+#### Dynamic Iceberg Latest Record Version Redeployment
+
+Any changes in config options will result in recreating the table during redeployment.
+
+* `EXTERNAL VOLUME`
+* `Base location name`
+* `Node Properties`
+* `Column Name`
+* `Join`
+* `Transform`
+
+| **Stage** | **Description** |
+|-------|-------------|
+| **Create or Replace Dynamic Iceberg Table** | This stage will execute a `CREATE` OR `REPLACE` statement and create a Iceberg Table in the target environment |
+
+#### Altering the Dynamic Iceberg Table Latest Record Version
+
+The following config changes trigger ALTER statements:
+
+1. Warehouse name
+2. Target Lag
+3. Time based Lag specification
+4. Cluster Key
+5. Table description
+6. Column description
+7. Node rename
+8. Storage location change
+
+These execute the two stages:
+
+| **Stage** | **Description** |
+|-----------|----------------|
+| **Alter Dynamic Table** | Executes ALTER to modify parameters |
+| **Refresh Dynamic Table** | Refreshes table to make data available |
+
+Other column or table level changes like data type change, column name change, column addition/deletion result in a `CREATE` statement.
+
+#### Redeployment with no changes 
+
+If the nodes are redeployed with no changes compared to previous deployment,then no stages are executed
+
+### Dynamic Iceberg Latest Record Version Undeployment
+
+If a Dynamic Iceberg Latest Record Version table is dropped from the workspace and commited to Git results in table dropped from target environment.
+
+| **Stage** | **Description** |
+|-------|-------------|
+| **Drop Dynamic Table** | Removes the Iceberg table from the target environment |
+
 ### Code
 
 ### Snowflake Iceberg table
@@ -698,3 +1110,18 @@ This is executed in two stages:
 
 * [Node definition](https://github.com/coalesceio/Iceberg-tables/tree/main/nodeTypes/SnowpipeIcebergtable-321)
 * [Create Template](https://github.com/coalesceio/Iceberg-tables/tree/main/nodeTypes/SnowpipeIcebergtable-321)
+
+### Dynamic Iceberg Work table
+
+* [Node definition](https://github.com/coalesceio/Iceberg-tables/blob/main/nodeTypes/DynamicIcebergTableWork-565/definition.yml)
+* [Create Template](https://github.com/coalesceio/Iceberg-tables/blob/main/nodeTypes/DynamicIcebergTableWork-565/create.sql.j2)
+
+### Dynamic Iceberg Dimension table
+
+* [Node definition](https://github.com/coalesceio/Iceberg-tables/blob/main/nodeTypes/DynamicIcebergTableDimension-566/definition.yml)
+* [Create Template](https://github.com/coalesceio/Iceberg-tables/blob/main/nodeTypes/DynamicIcebergTableDimension-566/create.sql.j2)
+
+### Dynamic Iceberg Latest Record Version table
+
+* [Node definition](https://github.com/coalesceio/Iceberg-tables/blob/main/nodeTypes/DynamicIcebergTableLatestRecordVersion-571/definition.yml)
+* [Create Template](https://github.com/coalesceio/Iceberg-tables/blob/main/nodeTypes/DynamicIcebergTableLatestRecordVersion-571/create.sql.j2)
