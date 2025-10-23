@@ -310,8 +310,8 @@ An Iceberg table uses the Apache Iceberg open table format specification, which 
   * **File Names (Optional - Ex:'a.csv','b.csv')**: Specifies a list of one or more file names (separated by commas) to be loaded.
   * **File Pattern (Optional - Ex:'.*hea.*[.]csv')**: A regular expression pattern string, enclosed in single quotes, specifying the file names or paths to match.
 * **External location**
-  * **External URI**: Enter the URI of the External location.
-  * **Storage Integration**: Specifies the name of the storage integration used to delegate authentication responsibility for external cloud storage to a Snowflake identity and access management (IAM) entity.
+  * **External URI**: Enter the URI of the External location. This URI can point to either a private or public bucket/container.
+  * **Storage Integration**: Specifies the name of the storage integration used to delegate authentication responsibility for external cloud storage to a Snowflake identity and access management (IAM) entity. This field is **not mandatory** for publicly accessible buckets or when another authentication method (such as presigned URLs or public access) is used.
 
 #### Copy-Into Iceberg - File Format
 
