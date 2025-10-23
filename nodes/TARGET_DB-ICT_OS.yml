@@ -24,7 +24,12 @@ operation:
   locationName: TARGET_DB
   materializationType: table
   metadata:
-    appliedNodeTests: []
+    appliedNodeTests:
+      - continueOnFailure: false
+        description: ""
+        name: Test
+        runOrder: After
+        templateString: ""
     columns:
       - acceptedValues:
           strictMatch: true

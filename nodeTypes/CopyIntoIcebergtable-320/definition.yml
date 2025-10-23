@@ -153,7 +153,7 @@ metadata:
         enableIf: "{% if config.extlocation %} true {% else %} false {% endif %}"
         isRequired: false
 
-      - displayName: Storage Integration
+      - displayName: Storage Integration (Mandatory for Private External URIs)
         attributeName: storageintegration
         type: textBox
         enableIf: "{% if config.extlocation %} true {% else %} false {% endif %}"

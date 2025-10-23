@@ -9,8 +9,8 @@ operation:
     dateformat: ""
     enforceLength: ""
     errornumber: ""
-    externalURI: Enter external URI-Ex:s3://snowflake-docs
-    extlocation: false
+    externalURI: s3://nasanex/NEX-DCP30/NEX-quartile/rcp26/mon/atmos/tasmax/r1i1p1/v1.0/CONUS/tasmax_ens-avg_amon_rcp26_CONUS_200601-201012.nc
+    extlocation: true
     extvolume: sficebergextvol1
     fieldDelim: ","
     fieldEnclosed: \042
@@ -21,9 +21,9 @@ operation:
     filePattern: ""
     fileType: JSON
     forceLoad: ""
-    intextstage: true
+    intextstage: false
     loadUncertainFiles: ""
-    onError: ""
+    onError: CONTINUE
     purgeBehavior: ""
     recDelim: |+
 

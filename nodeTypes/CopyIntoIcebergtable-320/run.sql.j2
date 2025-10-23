@@ -107,7 +107,14 @@ does not permit copying or modification for any other purpose.
             {{ ns.colist.rstrip(',') }} )
        {%endif%}
         FROM '{{config.externalURI}}'
-        STORAGE_INTEGRATION = {{config.storageintegration}}
+
+        {%- if config.storageintegration
+            and config.storageintegration | trim | length > 0
+            and config.storageintegration | lower != "null" %}
+
+            STORAGE_INTEGRATION = {{config.storageintegration}}
+
+        {%- endif %}
       
    {%endif%}
          
@@ -199,5 +206,3 @@ does not permit copying or modification for any other purpose.
         {%- if parameters.loadType == 'Reload' or config.truncateBefore == true-%}
 		     FORCE=TRUE
 		{%endif%}
- 
-         
