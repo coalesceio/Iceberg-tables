@@ -330,7 +330,7 @@ An Iceberg table uses the Apache Iceberg open table format specification, which 
 * **File Format Values** - Provides file format options for the File Type chosen.
 * **File Type**: Each file type has different configurations available.
   * **CSV**
-  * **Compression**: String (constant) that specifies the current compression algorithm for the data files to be loaded.
+  * **Compression**: String (constant) that specifies the current compression algorithm for the data files to be loaded. <br/>Choosing **Blank** will automatically skip this option.
   * **Record delimiter**: Characters that separate records in an input file.
   * **Field delimiter**: One or more single-byte or multibyte characters that separate fields in an input file.
   * **Field optionally enclosed by**: Character used to enclose strings.
@@ -342,7 +342,7 @@ An Iceberg table uses the Apache Iceberg open table format specification, which 
   * **Time format**: String that defines the format of time values in the data files to be loaded.
   * **Timestamp format**: String that defines the format of timestamp values in the data files to be loaded.
   * **JSON**
-    * **Compression**: String (constant) that specifies the current compression algorithm for the data files to be loaded.
+    * **Compression**: String (constant) that specifies the current compression algorithm for the data files to be loaded. Choosing **Blank** will automatically skip this option.
     * **Replace invalid characters**: Boolean that specifies whether to replace invalid UTF-8 characters with the Unicode replacement character.
     * **Trim Space**: Boolean that specifies whether to remove white space from fields.
     * **Strip Outer Array**: Boolean that instructs the JSON parser to remove outer brackets [ ].
@@ -365,15 +365,15 @@ An Iceberg table uses the Apache Iceberg open table format specification, which 
 
 | **Option** | **Description** |
 |------------|-----------------|
-| **On Error Behavior** | String (constant) that specifies the error handling for the load operation: <br/>- CONTINUE<br/>- SKIP_FILE<br/>- SKIP_FILE_num<br/>- SKIP_FILE_num%<br/>- ABORT_STATEMENT |
+| **On Error Behavior** | String (constant) that specifies the error handling for the load operation: <br/>- CONTINUE<br/>- SKIP_FILE<br/>- SKIP_FILE_num<br/>- SKIP_FILE_num%<br/>- ABORT_STATEMENT<br/>Choosing **Blank** will automatically skip this option.|
 | **Specify the number of errors that can be skipped** | Required when On Error Behavior is either `SKIP_FILE_num` or `SKIP_FILE_num%`. Specify the number of errors that can be skipped. |
 | **Size Limit** | Number (> 0) that specifies the maximum size (in bytes) of data to be loaded for a given COPY statement. |
-| **Purge Behavior** | Boolean that specifies whether to remove the data files from the stage automatically after the data is loaded successfully. |
+| **Purge Behavior** | Boolean that specifies whether to remove the data files from the stage automatically after the data is loaded successfully.<br/>Choosing **Blank** will automatically skip this option. |
 | **Return Failed Only** | Boolean that specifies whether to return only files that have failed to load in the statement result. |
-| **Force** | Boolean that specifies to load all files, regardless of whether they've been loaded previously and have not changed since they were loaded. |
-| **Load Uncertain Files** | Boolean that specifies to load files for which the load status is unknown. The COPY command skips these files by default. |
-| **Enforce Length** | Boolean that specifies whether to truncate text strings that exceed the target column length. |
-| **Truncate Columns** | Boolean that specifies whether to truncate text strings that exceed the target column length. |
+| **Force** | Boolean that specifies to load all files, regardless of whether they've been loaded previously and have not changed since they were loaded.<br/>Choosing **Blank** will automatically skip this option. |
+| **Load Uncertain Files** | Boolean that specifies to load files for which the load status is unknown. The COPY command skips these files by default.<br/>Choosing **Blank** will automatically skip this option. |
+| **Enforce Length** | Boolean that specifies whether to truncate text strings that exceed the target column length.<br/>Choosing **Blank** will automatically skip this option. |
+| **Truncate Columns** | Boolean that specifies whether to truncate text strings that exceed the target column length.<br/>Choosing **Blank** will automatically skip this option. |
 
 #### Copy-Into Iceberg System Columns
 
@@ -521,7 +521,7 @@ This means you can load data from files in micro-batches, making it available to
   * **File Format Values** -Provides file format options for the File Type chosen.
   * **File Type**: Each file type has different configurations available.
     * **CSV**
-    * **Compression**: String (constant) that specifies the current compression algorithm for the data files to be loaded.
+    * **Compression**: String (constant) that specifies the current compression algorithm for the data files to be loaded.<br/>Choosing **Blank** will automatically skip this option.
     * **Record delimiter**:Characters that separate records in an input file
     * **Field delimiter**:One or more singlebyte or multibyte characters that separate fields in an input file
     * **Field optionally enclosed by**:Character used to enclose strings
@@ -533,7 +533,7 @@ This means you can load data from files in micro-batches, making it available to
     * **Time format**: String that defines the format of time values in the data files to be loaded
     * **Timestamp format**:String that defines the format of timestamp values in the data files to be loaded.
     * **JSON**
-      * **Compression**: String (constant) that specifies the current compression algorithm for the data files to be loaded.
+      * **Compression**: String (constant) that specifies the current compression algorithm for the data files to be loaded.<br/>Choosing **Blank** will automatically skip this option.
       * **Replace invalid characters** - Boolean that specifies whether to replace invalid UTF-8 characters with the Unicode replacement character.
       * **Trim Space** - Boolean that specifies whether to remove white space from fields.
       * **Strip Outer Array**:Boolean that instructs the JSON parser to remove outer brackets [ ].
@@ -554,27 +554,11 @@ This means you can load data from files in micro-batches, making it available to
 
 #### Snowpipe Iceberg Copy Options
 
-If you toggle Enable Snowipe under Snowpipe Options to **ON**, these configuration options are available.
-
 | **Options** | **Description** |
 |------------|-----------------|
-| **On Error Behavior** | String (constant) that specifies the error handling for the load operation: <br/>- CONTINUE<br/>- SKIP_FILE<br/>- SKIP_FILE_num<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Specify the number of errors that can be skipped.<br/>- SKIP_FILE_num%<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Specify the number of errors that can be skipped. |
-| **Enforce Length** | Boolean that specifies whether to truncate text strings that exceed the target column length. |
-| **Truncate Columns** | Boolean that specifies whether to truncate text strings that exceed the target column length. |
-
-If you toggle Enable Snowpipe under Snowpipe Options to **OFF**, these configuration options are available.
-
-| **Options** | **Description** |
-|------------|-----------------|
-| **On Error Behavior** | String (constant) that specifies the error handling for the load operation:<br/>- CONTINUE<br/>- SKIP_FILE<br/>- SKIP_FILE_num<br/>- SKIP_FILE_num%<br/>- ABORT_STATEMENT |
-| **Specify the number of errors that can be skipped** | Required when On Error Behavior is either `SKIP_FILE_num` or `SKIP_FILE_num%`. Specify the number of errors that can be skipped. |
-| **Size Limit** | Number (> 0) that specifies the maximum size (in bytes) of data to be loaded for a given COPY statement. |
-| **Purge Behavior** | Boolean that specifies whether to remove the data files from the stage automatically after the data is loaded successfully. |
-| **Return Failed Only** | Boolean that specifies whether to return only files that have failed to load in the statement result. |
-| **Force** | Boolean that specifies to load all files, regardless of whether they've been loaded previously and have not changed since they were loaded. |
-| **Load Uncertain Files** | Boolean that specifies to load files for which the load status is unknown. The COPY command skips these files by default. |
-| **Enforce Length** | Boolean that specifies whether to truncate text strings that exceed the target column length. |
-| **Truncate Columns** | Boolean that specifies whether to truncate text strings that exceed the target column length. |
+| **On Error Behavior** | String (constant) that specifies the error handling for the load operation: <br/>- CONTINUE<br/>- SKIP_FILE<br/>- SKIP_FILE_num<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Specify the number of errors that can be skipped.<br/>- SKIP_FILE_num%<br/>&nbsp;&nbsp;&nbsp;&nbsp;- Specify the number of errors that can be skipped.<br/>Choosing **Blank** will automatically skip this option. |
+| **Enforce Length** | Boolean that specifies whether to truncate text strings that exceed the target column length.<br/>Choosing **Blank** will automatically skip this option. |
+| **Truncate Columns** | Boolean that specifies whether to truncate text strings that exceed the target column length.<br/>Choosing **Blank** will automatically skip this option. |
 
 #### Snowpipe Iceberg System Columns
 
