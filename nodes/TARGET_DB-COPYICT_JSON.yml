@@ -5,12 +5,12 @@ operation:
   config:
     basename: COPYJSON
     clusterKey: false
-    compression: ""
+    compression: AUTO
     dateformat: ""
     enforceLength: ""
     errornumber: ""
     externalURI: s3://nasanex/NEX-DCP30/NEX-quartile/rcp26/mon/atmos/tasmax/r1i1p1/v1.0/CONUS/tasmax_ens-avg_amon_rcp26_CONUS_200601-201012.nc
-    extlocation: true
+    extlocation: false
     extvolume: sficebergextvol1
     fieldDelim: ","
     fieldEnclosed: \042
@@ -21,7 +21,7 @@ operation:
     filePattern: ""
     fileType: JSON
     forceLoad: ""
-    intextstage: false
+    intextstage: true
     loadUncertainFiles: ""
     onError: CONTINUE
     purgeBehavior: ""

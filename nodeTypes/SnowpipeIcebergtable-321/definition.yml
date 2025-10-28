@@ -212,7 +212,9 @@ metadata:
         attributeName: compression
         enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType in ('CSV','JSON')) %} true {% else %} false {% endif %}"
         type: dropdownSelector
+        default: ""
         options:
+        - ""
         - "AUTO"
         - "GZIP"
         - "BZ2"
@@ -302,7 +304,9 @@ metadata:
       - displayName: On Error Behavior
         attributeName: onError
         type: dropdownSelector
+        default: ""
         options:
+        - ""
         - "CONTINUE"
         - "SKIP_FILE"
         - "SKIP_FILE_<num>"
@@ -318,7 +322,9 @@ metadata:
       - displayName: Enforce Length
         attributeName: enforceLength
         type: dropdownSelector
+        default: ""
         options:
+        - ""
         - "TRUE"
         - "FALSE"
         isRequired: false
@@ -326,7 +332,9 @@ metadata:
       - displayName: Truncate Columns
         attributeName: truncateColumns
         type: dropdownSelector
+        default: ""
         options:
+        - ""
         - "TRUE"
         - "FALSE"
         isRequired: false

@@ -69,8 +69,20 @@ does not permit copying or modification for any other purpose.
         {% set dynamicTableComment = 'COMMENT = "' + desiredState.node.description | escape + '"' %}
     {% endif %}
 
-    {% set dynamicTablerefresh = desiredState.config.refresh_mode %}            {# Refresh-type option #}
-    {% set dynamicTableinitialize = desiredState.config.initialize %}           {# Initialize option #}
+    {# Refresh-type option #}
+    {%- if desiredState.config.refresh_mode == '' %}
+        {% set dynamicTablerefresh = 'INCREMENTAL' %}
+    {%- else %}
+        {% set dynamicTablerefresh = desiredState.config.refresh_mode %}
+    {% endif %}
+
+    {# Initialize option #}
+    {% if desiredState.config.initialize == '' %}
+        {% set dynamicTableinitialize = 'ON_CREATE' %}
+    {% else %}
+        {% set dynamicTableinitialize = desiredState.config.initialize %}
+    {% endif %}
+
     {% set dynamicTableexternalVolume = desiredState.config.externalVolume %}   {# External Volume option #}
     {% set dynamicTablebaseLocation = desiredState.config.baseLocation %}       {# Base Location option #}
 

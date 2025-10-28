@@ -201,7 +201,9 @@ metadata:
         attributeName: compression
         enableIf: "{% if (config.fileFormatType != 'File Format Name' and config.fileType not in ('ORC')) %} true {% else %} false {% endif %}"
         type: dropdownSelector
+        default: ""
         options:
+        - ""
         - "AUTO"
         - "GZIP"
         - "BZ2"
@@ -289,7 +291,9 @@ metadata:
       - displayName: On Error Behavior
         attributeName: onError
         type: dropdownSelector
+        default: ""
         options:
+        - ""
         - "CONTINUE"
         - "SKIP_FILE"
         - "SKIP_FILE_<num>"
@@ -311,7 +315,9 @@ metadata:
       - displayName: Purge Behavior
         attributeName: purgeBehavior
         type: dropdownSelector
+        default: ""
         options:
+        - ""
         - "TRUE"
         - "FALSE"
         isRequired: false
@@ -319,7 +325,9 @@ metadata:
       - displayName: Return Failed Only
         attributeName: returnFailedOnly
         type: dropdownSelector
+        default: ""
         options:
+        - ""
         - "TRUE"
         - "FALSE"
         isRequired: false
@@ -327,7 +335,9 @@ metadata:
       - displayName: Enforce Length
         attributeName: enforceLength
         type: dropdownSelector
+        default: ""
         options:
+        - ""
         - "TRUE"
         - "FALSE"
         isRequired: false
@@ -335,7 +345,9 @@ metadata:
       - displayName: Truncate Columns
         attributeName: truncateColumns
         type: dropdownSelector
+        default: ""
         options:
+        - ""
         - "TRUE"
         - "FALSE"
         isRequired: false
@@ -343,7 +355,9 @@ metadata:
       - displayName: Force
         attributeName: forceLoad
         type: dropdownSelector
+        default: ""
         options:
+        - ""
         - "TRUE"
         - "FALSE"
         isRequired: false
@@ -352,7 +366,9 @@ metadata:
       - displayName: Load Uncertain Files
         attributeName: loadUncertainFiles
         type: dropdownSelector
+        default: ""
         options:
+        - ""
         - "TRUE"
         - "FALSE"
         isRequired: false

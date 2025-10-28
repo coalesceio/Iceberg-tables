@@ -3,6 +3,7 @@ id: 22b892f4-9948-4829-b187-e567543c86d3
 name: ICT_COPY_SPJSON
 operation:
   config:
+    awsSnsTopic: ""
     basename: ictjsoneg
     catint: ""
     cloudProvider: AWS
