@@ -9,8 +9,8 @@ operation:
     dateformat: ""
     enforceLength: ""
     errornumber: ""
-    externalURI: s3://nasanex/NEX-DCP30/NEX-quartile/rcp26/mon/atmos/tasmax/r1i1p1/v1.0/CONUS/tasmax_ens-avg_amon_rcp26_CONUS_200601-201012.nc
-    extlocation: false
+    externalURI: s3://dataentrega/testing
+    extlocation: true
     extvolume: sficebergextvol1
     fieldDelim: ","
     fieldEnclosed: \042
@@ -21,7 +21,7 @@ operation:
     filePattern: ""
     fileType: JSON
     forceLoad: ""
-    intextstage: true
+    intextstage: false
     loadUncertainFiles: ""
     onError: CONTINUE
     purgeBehavior: ""
@@ -34,7 +34,7 @@ operation:
     skipHeader: "1"
     stageName: STAGE_LOCAL
     stageStorageLocationName: SOURCE_DATA
-    storageintegration: ""
+    storageintegration: SP_INT
     stripouterarray: true
     tcatalog: Snowflake
     timeformat: ""
