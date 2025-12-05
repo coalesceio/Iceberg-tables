@@ -133,7 +133,7 @@ You can use this option to create an Iceberg table registered in the AWS Glue Da
 | **Catalog namespace** | Optionally specifies the namespace (for example, `my_glue_database`) for the AWS Glue Data Catalog source. Option available if AWS Glue catalog is chosen. |
 | **Catalog table name** | Name of the catalog table. Option available if AWS Glue catalog is chosen. |
 | **Metadata filepath** | Specifies the relative path of the Iceberg metadata file to use for column definitions. Option available if Object Storage Catalog is chosen. |
-| **Schedule refresh** | True or False toggle that determines whether a task will be created or if the SQL to be used in the task will execute DML as a Run action. Prior to creating a task, it is helpful to test the SQL the task will execute to make sure it runs without errors and returns the expected data.<br/>- **False** - A table will be created and SQL will execute as a Run action.<br/>- **True** - After sufficiently testing the SQL as a Run action, setting Schedule refresh Mode to true will wrap the SQL statement in a task with options specified in Scheduling Options.<br>When Run is executed, a message appears prompting the user to wait for the refresh to occur. |
+| **Schedule refresh** | True or False toggle that determines whether a task will be created or if the SQL to be used in the task will execute DML as a Run action. Prior to creating a task, it is helpful to test the SQL the task will execute to make sure it runs without errors and returns the expected data.<br/>- **False** - A table will be created and SQL will execute as a Run action.<br/>- **True** - After sufficiently testing the SQL as a Run action, setting Schedule refresh Mode to true will wrap the SQL statement in a task with options specified in Scheduling Options.<br/>When Run is executed, a message appears prompting the user to wait for the refresh to occur. |
 
 ### External Iceberg Table Task Scheduling Options
 
@@ -479,7 +479,7 @@ This means you can load data from files in micro-batches, making it available to
 
 | **Stage** | **Description** |
 |----------|---------------|
-| **Enable Snowpipe** | Drop down that helps us to create a pipe to auto ingest files from external stage or validate the Copy-Into statement.<br>When Run is executed, with Enable Snowpipe selection, a message appears suggesting the user it is a snowpipe and no test run possible. |
+| **Enable Snowpipe** | Drop down that helps us to create a pipe to auto ingest files from external stage or validate the Copy-Into statement.<br/>When Run is executed, with Enable Snowpipe selection, a message appears suggesting the user it is a snowpipe and no test run possible. |
 | **Cloud Provider Options:** | **AWS** - AWS SNS Topic. Specifies the Amazon Resource Name (ARN) for the SNS topic for your S3 bucket<br/><br/>**Azure** - Integration. Specifies the existing notification integration used to access the storage queue<br/><br/>**GCP** - Integration. Specifies the existing notification integration used to access the storage queue |
 | **Test Copy Statement** | To validate the Copy-into statement before we use it to create PIPE |
 | **Load historical data** | Loads the historic data into the target table by executing a COPY_INTO statement |
