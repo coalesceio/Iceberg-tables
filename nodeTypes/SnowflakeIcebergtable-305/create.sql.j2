@@ -8,6 +8,16 @@ does not permit copying or modification for any other purpose.
 {# == Node Type Name           : Snowflake Iceberg tables == #}
 {# == Node Type Description    : This node helps to create a snowflake managed iceberg table and insert data from source table into iceberg tables == #}
 
+{%- if currentState and desiredState and currentState.node.nodeType != desiredState.node.nodeType %}
+    {%- set warningMsg = getNodeTypeSwitchWarning() | default('') %}
+
+    {# Warning display - Node type changes can impact related tasks, streams, or services. #}
+    {%- if warningMsg | trim | length > 0 -%}
+        {{ stage('Warning! Node Type Switching Detected', false) }}
+        {{ warningMsg }}
+        select 1=0
+    {%- endif -%}
+{%- endif -%}
 
 # Create table first
 
@@ -97,7 +107,6 @@ does not permit copying or modification for any other purpose.
     {% endif %}		    
 
 {%elif currentState!=undefined and currentState!=desiredState and desiredState!=undefined%}
-       
 
       {% if 
         clusterKeyTest == false or
@@ -113,8 +122,8 @@ does not permit copying or modification for any other purpose.
 
         
         {% set nodeCommentTest = currentState.node.description == desiredState.node.description %}
-        {% set extvoltest = currentState.config.extvolume == desiredState.config.extvolume %}
-        {% set baseloctest = currentState.config.basename == desiredState.config.basename%}
+        {% set extvoltest = currentState.config.extvolume | default('') == desiredState.config.extvolume %}
+        {% set baseloctest = currentState.config.basename | default('') == desiredState.config.basename%}
 
                 
         {% set ns = namespace(
@@ -261,7 +270,7 @@ does not permit copying or modification for any other purpose.
 
         {# Create Iceberg table-redeployment #}
 
-{% if  currentState.node.name != desiredState.node.name or currentState.node.location.name!= desiredState.node.location.name or baseloctest == false  or ns.colchanges > 0 or ns.acolchanges >0 or ns.dcolchanges > 0 or nodeCommentTest == false or extvoltest == false or clusterTest == false or ns.storageLocationTest == false or ns.targetlocationtest  == false%}
+{% if  currentState.node.name != desiredState.node.name or currentState.node.location.name!= desiredState.node.location.name or baseloctest == false  or ns.colchanges > 0 or ns.acolchanges >0 or ns.dcolchanges > 0 or nodeCommentTest == false or extvoltest == false or clusterTest == false or ns.storageLocationTest == false or ns.targetlocationtest  == false or currentState.node.materializationType != desiredState.node.materializationType %}
 
                 
           {%set extvol = '' %}
@@ -319,14 +328,14 @@ does not permit copying or modification for any other purpose.
 
             {% endif %}
         {% endif %}
-
-        {%if currentState.node.name != desiredState.node.name or ns.targetlocationtest == false%}
-
-           {{ stage('Drop Iceberg Table at previous target location') }}
-
-           DROP ICEBERG TABLE IF EXISTS {{ ref_no_link(currentState.node.location.name, currentState.node.name) }}
-
-        {%endif%}
+    
+        {% if currentState.node.name != desiredState.node.name
+            or ns.targetlocationtest == false
+            or currentState.node.materializationType != desiredState.node.materializationType %}
+            {{ stage('Drop ' + ref_no_link(currentState.node.location.name, currentState.node.name)) }}
+            {%- set materialization = dropMaterialization(currentState.node.materializationType) %}
+            DROP {{ materialization }} {{ ref_no_link(currentState.node.location.name, currentState.node.name) }}
+        {% endif %}
          
         {{ stage('Create Iceberg Table') }}
 
@@ -436,8 +445,8 @@ does not permit copying or modification for any other purpose.
     {% set targetObjectSchema = ref_no_link(currentState.node.location.name, currentState.node.name).split('.')[1] %} 
     {% set fullyQualifiedTargetObjectName = ref_no_link(currentState.node.location.name, currentState.node.name) %}
            
-        {{ stage('Drop iceberg table') }}
-         DROP ICEBERG TABLE IF EXISTS {{ fullyQualifiedTargetObjectName }}
+    {{ stage('Drop iceberg table') }}
+    {%- set materialization = dropMaterialization(currentState.node.materializationType) %}
+    DROP {{ materialization }} {{ ref_no_link(currentState.node.location.name, currentState.node.name) }}
 	  
 {%endif%}
-

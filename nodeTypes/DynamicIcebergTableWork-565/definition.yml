@@ -17,6 +17,13 @@ metadata:
       - groupName: Dynamic Iceberg Options
         items:
 
+        - type: materializationSelector
+          isRequired: true
+          default: dynamic iceberg table
+          options:
+            - dynamic iceberg table
+          enableIf: "true"
+
         - type: label
           attributeName: note2
           displayName: 
@@ -122,8 +129,8 @@ metadata:
           enableIf: "{% if config.clusterKey %} true {% else %} false {% endif %}"
 
       - groupName: General Options
-        items: 
-
+        items:
+        
         - type: toggleButton
           attributeName: selectDistinct
           displayName: Distinct

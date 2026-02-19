@@ -17,6 +17,13 @@ metadata:
       - groupName: Dynamic Iceberg Options
         items:
 
+        - type: materializationSelector
+          isRequired: true
+          default: dynamic iceberg table
+          options:
+            - dynamic iceberg table
+          enableIf: "true"
+
         - type: label
           attributeName: note2
           displayName: 
