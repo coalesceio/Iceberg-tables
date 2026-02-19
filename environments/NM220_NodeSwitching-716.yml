@@ -1,0 +1,14 @@
+fileVersion: 1
+id: "716"
+mappingDefinitions:
+  SOURCE_DATA:
+    database: TANVI_DEV
+    schema: SOURCE
+  TARGET_DB:
+    database: TANVI_DEV
+    schema: QA_PHASE
+  TARGET_DEV:
+    database: TANVI_DEV
+    schema: QA_PHASE2
+name: NM220_NodeSwitching
+type: Environment
