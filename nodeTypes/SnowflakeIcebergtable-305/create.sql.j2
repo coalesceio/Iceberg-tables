@@ -19,7 +19,7 @@ does not permit copying or modification for any other purpose.
     {%- endif -%}
 {%- endif -%}
 
-# Create table first
+{# Create table first #}
 
 {% if currentState == undefined or currentState.storageLocations|length == 0%}
 
@@ -27,23 +27,23 @@ does not permit copying or modification for any other purpose.
           {%set extvol = '' %}
           {%set baseloc ='' %}
 
-        #External volume
+        {# External volume #}
           {%if desiredState.config.extvol != '' %}
             {%set extvol =  desiredState.config.extvolume %}
           {%endif%}
         
 
-        #Baselocation
+        {# Baselocation #}
         {%if desiredState.config.basename != '' %}
             {%set baseloc =  desiredState.config.basename %}
         {%endif%}
 
-        #Catalog sync
+        {# Catalog sync #}
         {%if desiredState.config.catint != '' and desiredState.config.tcatalog == 'Polaris' %}
            {%set catsync = desiredState.config.catint %}
         {%endif%}
 
-        #Figure out cluster key
+        {# Figure out cluster key #}
 
         {% set nsVariables = namespace(finalClusterKey="") %}
         {% if desiredState.config.clusterKey == true %}
@@ -169,14 +169,14 @@ does not permit copying or modification for any other purpose.
         {%set ns.storageLocationTest = true %}
         
         {% for name in desiredUniqueStorageLocations %}
-            ## Current mappings
+            {# Current mappings #}
             
             {%if name in currentState.storgeLocations%}
             {% set currentDatabase = currentState.storageLocations | selectattr('name', 'equalto', name) | map(attribute='database') | first %}
             {% set currentSchema = currentState.storageLocations | selectattr('name', 'equalto', name) | map(attribute='schema') | first %}
             {% set currentDatabaseSchema = currentDatabase + '.' + currentSchema %}  
             {%endif%}        
-            ## Desired mappings
+            {#  Desired mappings #}
             {% set desiredDatabase = desiredState.storageLocations | selectattr('name', 'equalto', name) | map(attribute='database') | first %}
             {% set desiredSchema = desiredState.storageLocations | selectattr('name', 'equalto', name) | map(attribute='schema') | first %}
             {% set desiredDatabaseSchema = desiredDatabase + '.' + desiredSchema %}
@@ -280,22 +280,22 @@ does not permit copying or modification for any other purpose.
           {%set metafilepath ='' %}
           {%set baseloc ='' %}
         
-        #External volume
+        {# External volume #}
         {%if desiredState.config.extvol != '' %}
             {%set extvol =  desiredState.config.extvolume %}
         {%endif%}
 
-        #Baselocation
+        {# Baselocation #}
         {%if desiredState.config.basename != '' %}
             {%set baseloc =  desiredState.config.basename %}
         {%endif%}
 
-        #Catalog sync
+        {# Catalog sync #}
         {%if desiredState.config.catint != '' and desiredState.config.tcatalog == 'Polaris' %}
            {%set catsync = desiredState.config.catint %}
         {%endif%}
 
-        #Figure out cluster key
+        {# Figure out cluster key #}
 
         {% set nsVariables = namespace(finalClusterKey="") %}
         {% if desiredState.config.clusterKey == true %}
