@@ -20,6 +20,24 @@ does not permit copying or modification for any other purpose.
         Refer to documentation for more info*/
 
     {% endif %}
+
+    {%- if currentState and currentState.node.nodeType != desiredState.node.nodeType %}
+        {%- set warningMsg = getNodeTypeSwitchWarning() | default('') %}
+
+        {# Warning display - Node type changes can impact related tasks, streams, or services. #}
+        {%- if warningMsg | trim | length > 0 -%}
+            {{ stage('Warning! Node Type Switching Detected', false) }}
+            {{ warningMsg }}
+            select 1=0
+        {%- endif -%}
+
+        {% if currentState.node.materializationType != desiredState.node.materializationType %}
+            {{ stage('Drop ' + ref_no_link(currentState.node.location.name, currentState.node.name)) }}
+            {%- set materialization = dropMaterialization(currentState.node.materializationType) %}
+            DROP {{ materialization }} {{ ref_no_link(currentState.node.location.name, currentState.node.name) }}
+        {% endif %}
+    {%- endif -%}
+
 {% endif %}
 
 {% if desiredState %}
@@ -130,15 +148,16 @@ does not permit copying or modification for any other purpose.
         {% set columnsTransformTest = currentTransformArray == desiredTransformArray %}
 
         {# Config #}
-        {% set partitionByTest = currentState.config.partitionBy == desiredState.config.partitionBy %}
-        {% set orderByTest = currentState.config.orderBy == desiredState.config.orderBy %}
-        {% set orderByDateTimeTest = currentState.config.orderByDateTime == desiredState.config.orderByDateTime %}
-        {% set recordVersioningTest = currentState.config.recordVersioning == desiredState.config.recordVersioning %}
-        {% set granttest = currentState.config.cpygrants == desiredState.config.cpygrants%}
-        {% set refreshTest = currentState.config.refresh_mode == desiredState.config.refresh_mode %}
-        {% set initializeTest = currentState.config.initialize == desiredState.config.initialize %}
-        {% set externalVolumeTest = currentState.config.externalVolume == desiredState.config.externalVolume %}
-        {% set baseLocationTest = currentState.config.baseLocation == desiredState.config.baseLocation %}
+        {% set partitionByTest = currentState.config.partitionBy | default('') == desiredState.config.partitionBy %}
+        {% set orderByTest = currentState.config.orderBy | default('') == desiredState.config.orderBy %}
+        {% set orderByDateTimeTest = currentState.config.orderByDateTime | default('') == desiredState.config.orderByDateTime %}
+        {% set recordVersioningTest = currentState.config.recordVersioning | default('') == desiredState.config.recordVersioning %}
+        {% set granttest = currentState.config.cpygrants | default(false) == desiredState.config.cpygrants%}
+        {% set refreshTest = currentState.config.refresh_mode | default('') == desiredState.config.refresh_mode %}
+        {% set initializeTest = currentState.config.initialize | default('') == desiredState.config.initialize %}
+        {% set externalVolumeTest = currentState.config.externalVolume | default('') == desiredState.config.externalVolume %}
+        {% set baseLocationTest = currentState.config.baseLocation | default('') == desiredState.config.baseLocation %}
+        {% set materializationTest = currentState.node.materializationType == desiredState.node.materializationType %}
 
         {# Column description changes and other column level changes #}
         {% for alterCurCol in currentState.columns %}        
@@ -240,6 +259,7 @@ does not permit copying or modification for any other purpose.
             or refreshTest                      == false
             or externalVolumeTest               == false
             or baseLocationTest                 == false
+            or materializationTest          == false
             or nsVariables.acolchanges          > 0
             or nsVariables.dcolchanges          > 0  %}
 
@@ -254,7 +274,7 @@ does not permit copying or modification for any other purpose.
 
         {#Current Warehouse#}
         {% if currentState.parameters.targetDynamicTableWarehouse == 'DEV ENVIRONMENT' %}
-            {% set currentDynamicTableWarehouse = currentState.config.warehouseName %}
+            {% set currentDynamicTableWarehouse = currentState.config.warehouseName | default('') %}
         {% else %}
             {% set currentDynamicTableWarehouse = currentState.parameters.targetDynamicTableWarehouse %}
         {% endif %}
@@ -267,16 +287,16 @@ does not permit copying or modification for any other purpose.
 
         {% set nodeNameTest = currentState.node.name == desiredState.node.name %}
 
-        {% set lagSpecificationTest = currentState.config.tgtLagSpecification == desiredState.config.tgtLagSpecification %}
+        {% set lagSpecificationTest = currentState.config.tgtLagSpecification | default('') == desiredState.config.tgtLagSpecification %}
         {% if lagSpecificationTest and desiredState.config.tgtLagSpecification == 'TIME BASED' %}
-            {% set lagSpecificationTest = desiredState.config.lagSpecification == currentState.config.lagSpecification %}
+            {% set lagSpecificationTest = desiredState.config.lagSpecification == currentState.config.lagSpecification | default('') %}
         {% endif %}
 
         {% set nodeCommentTest = currentState.node.description == desiredState.node.description %}
 
         {# Clustering Test #}
-        {% set clusterKeyTest = currentState.config.clusterKey == desiredState.config.clusterKey %}
-        {% set clusterKeyConfigTest = currentState.config.clusterKeyConfig == desiredState.config.clusterKeyConfig %}
+        {% set clusterKeyTest = currentState.config.clusterKey | default(false) == desiredState.config.clusterKey %}
+        {% set clusterKeyConfigTest = currentState.config.clusterKeyConfig | default({'items': [{}]}) == desiredState.config.clusterKeyConfig %}
 
         {% if warehouseTest                     == false
             or lagSpecificationTest             == false
@@ -456,6 +476,7 @@ does not permit copying or modification for any other purpose.
     {% set fullyQualifiedTargetDynamicTableName = ref_no_link(currentState.node.location.name, currentState.node.name) %}
 
     {{ stage('Drop Dynamic Iceberg Table') }}
-    DROP DYNAMIC TABLE IF EXISTS {{ fullyQualifiedTargetDynamicTableName }}
+    {%- set materialization = dropMaterialization(currentState.node.materializationType) %}
+    DROP {{ materialization }} {{ ref_no_link(currentState.node.location.name, currentState.node.name) }}
 
 {% endif %}

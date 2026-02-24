@@ -4,7 +4,7 @@ isDisabled: false
 metadata:
   defaultStorageLocation: null
   error: null
-  nodeMetadataSpec: |
+  nodeMetadataSpec: |-
     capitalized: Snowflake Iceberg table
     short: ICT
     plural: Iceberg tables
@@ -16,6 +16,13 @@ metadata:
 
     - groupName: Iceberg Options
       items:
+
+      - type: materializationSelector
+        isRequired: true
+        default: iceberg table
+        options:
+        - iceberg table
+        enableIf: "true"
 
       - displayName: Type of catalog
         attributeName: tcatalog
@@ -40,6 +47,7 @@ metadata:
       
       - displayName: Catalog integration
         attributeName: catint
+        default: ''
         type: textBox
         enableIf: "{% if config.tcatalog == 'Polaris'  %} true {% else %} false {% endif %}"
 
