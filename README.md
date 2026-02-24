@@ -1,6 +1,14 @@
-# Iceberg Tables Package
+# Iceberg Tables Package – Business Summary
 
-The Iceberg Tables Package includes:
+The Iceberg Tables Package provides a standardized framework for creating and managing Apache Iceberg–based tables within Snowflake environments. Built on the open table format from Apache Iceberg and integrated with Snowflake, the package enables organizations to store data in external cloud storage while maintaining Snowflake’s performance, governance, and SQL capabilities.
+
+This package supports multiple ingestion and processing patterns, including batch loading (Copy Into), automated micro-batch ingestion (Snowpipe), externally cataloged Iceberg tables, and dynamic Iceberg tables for incremental transformations. It allows businesses to work directly with data lake storage such as AWS S3, Azure Blob Storage without moving data into native Snowflake storage.
+
+By combining open data lake storage with Snowflake’s compute, optimization, and lifecycle management features, the Iceberg Tables Package enables scalable, cost-efficient, and flexible data architectures. It is ideal for organizations that want to modernize data lake environments, support near real-time ingestion, implement incremental data pipelines, and maintain ACID compliance while leveraging open standards.
+
+-------
+
+## Iceberg Tables Package includes
 
 * [Snowflake Iceberg table](#snowflake-iceberg-table)
 * [External Iceberg table](#external-iceberg-table)
@@ -83,6 +91,14 @@ Changes in structured data type columns excluding any other config changes resul
 ### Redeployment with no changes 
 
 If the nodes are redeployed with no changes compared to previous deployment,then no stages are executed
+
+## Node Type Switching
+
+Node Type switching is supported starting from Coalesce version **7.29+**.
+
+From this version onward, a node’s materialization type can be switched from one supported type to another, subject to certain limitations.
+
+For more info click here - [Node Type Switching Logic and Limitations](#node-type-switching-logic)
 
 #### Snowflake Iceberg Undeployment
 
@@ -791,6 +807,14 @@ Other column or table level changes like data type change, column name change, c
 
 If the nodes are redeployed with no changes compared to previous deployment,then no stages are executed
 
+## Node Type Switching
+
+Node Type switching is supported starting from Coalesce version **7.29+**.
+
+From this version onward, a node’s materialization type can be switched from one supported type to another, subject to certain limitations.
+
+For more info click here - [Node Type Switching Logic and Limitations](#node-type-switching-logic)
+
 ### Dynamic Iceberg Work Undeployment
 
 If a Dynamic Iceberg Work table is dropped from the workspace and commited to Git results in table dropped from target environment.
@@ -927,6 +951,14 @@ Other column or table level changes like data type change, column name change, c
 #### Redeployment with no changes 
 
 If the nodes are redeployed with no changes compared to previous deployment,then no stages are executed
+
+## Node Type Switching
+
+Node Type switching is supported starting from Coalesce version **7.29+**.
+
+From this version onward, a node’s materialization type can be switched from one supported type to another, subject to certain limitations.
+
+For more info click here - [Node Type Switching Logic and Limitations](#node-type-switching-logic)
 
 ### Dynamic Iceberg Dimension Undeployment
 
@@ -1065,6 +1097,14 @@ Other column or table level changes like data type change, column name change, c
 
 If the nodes are redeployed with no changes compared to previous deployment,then no stages are executed
 
+## Node Type Switching
+
+Node Type switching is supported starting from Coalesce version **7.29+**.
+
+From this version onward, a node’s materialization type can be switched from one supported type to another, subject to certain limitations.
+
+For more info click here - [Node Type Switching Logic and Limitations](#node-type-switching-logic)
+
 ### Dynamic Iceberg Latest Record Version Undeployment
 
 If a Dynamic Iceberg Latest Record Version table is dropped from the workspace and commited to Git results in table dropped from target environment.
@@ -1072,6 +1112,33 @@ If a Dynamic Iceberg Latest Record Version table is dropped from the workspace a
 | **Stage** | **Description** |
 |-------|-------------|
 | **Drop Dynamic Table** | Removes the Iceberg table from the target environment |
+
+-----------------
+
+## Node Type Switching Logic
+
+| Current MaterializationType | Desired MaterializationType | Stage |
+|------------|--------|-------|
+| Iceberg Table | Iceberg Table | Follows existing redeployment stages |
+| Any Other | Iceberg Table | 1. Warning (if applicable)<br/>2. Drop <br/> 3. Create |
+| Dynamic Iceberg Table | Dynamic Iceberg Table | Follows existing redeployment stages |
+| Any Other | Dynamic Iceberg Table | 1. Warning (if applicable)<br/>2. Drop <br/> 3. Create |
+
+Please review the documented limitations before performing a node type switch to ensure compatibility and avoid unintended deployment issues.
+
+### ⚠ Limitations of Node Type Switching (Current)
+
+| # | Current Materialization | Desired Materialization | Limitation |
+|---|--------------------------|--------------------------|------------|
+| 1 | Older Version Iceberg Table | Table | Results in `ALTER` failure. Iceberg tables require `ALTER ICEBERG TABLE`. Works only if latest package (with switching support) is already used. |
+| 2 | Older Version<br/>Create or Alter-View<br/>Data Quality-DMF | Any(except View) | Switch fails unless current node uses latest package supporting node type switching. |
+| 3 | First Node in Pipeline | Any | Not supported. First node is foundational and switching may disrupt the pipeline. |
+| 4 | External Packages | Any | Not supported as they typically act as first nodes in the pipeline. |
+| 5 | Functional Packages | Any | Not supported due to column re-sync behavior which may cause schema inconsistencies. |
+| 6 | Dynamic Dimension / LRV | Any | System columns must be manually dropped before redeployment. |
+| 7 | Any | Any Other | After performing node switching, the `Create/Run` in Workspace browser may not work as expected due to changes in the node’s materialization type. |
+
+--------------
 
 ### Code
 
