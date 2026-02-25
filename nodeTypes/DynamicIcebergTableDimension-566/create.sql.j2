@@ -148,9 +148,9 @@ does not permit copying or modification for any other purpose.
         {% set columnsTransformTest = currentTransformArray == desiredTransformArray %}
 
         {# Config #}
-        {% set partitionByTest = currentState.config.partitionBy | default('') == desiredState.config.partitionBy %}
-        {% set orderByTest = currentState.config.orderBy | default('') == desiredState.config.orderBy %}
-        {% set orderByDateTimeTest = currentState.config.orderByDateTime | default('') == desiredState.config.orderByDateTime %}
+        {% set partitionByTest = currentState.config.partitionBy | default({'items': [{}]}) == desiredState.config.partitionBy %}
+        {% set orderByTest = currentState.config.orderBy | default({'items': [{}]}) == desiredState.config.orderBy %}
+        {% set orderByDateTimeTest = currentState.config.orderByDateTime | default({'items': [{}]}) == desiredState.config.orderByDateTime %}
         {% set recordVersioningTest = currentState.config.recordVersioning | default('') == desiredState.config.recordVersioning %}
         {% set granttest = currentState.config.cpygrants | default(false) == desiredState.config.cpygrants%}
         {% set refreshTest = currentState.config.refresh_mode | default('') == desiredState.config.refresh_mode %}
