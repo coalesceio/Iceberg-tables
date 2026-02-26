@@ -21,21 +21,14 @@ operation:
         - {}
     orderByDateTime:
       items:
-        - colNameDate:
-            columnCounter: 2ce3747b-a79e-4a0f-9a2c-cda7bd30ccde
-            stepCounter: 1e9ce886-a5ec-4493-8ad9-957a74e9d0f5
-          colNameTimestamp:
-            columnCounter: 499b4078-732f-4f07-8b9d-31fcd2fd8d08
-            stepCounter: 1e9ce886-a5ec-4493-8ad9-957a74e9d0f5
+        - {}
     orderseq:
       items:
         - {}
     partitionBy:
       items:
-        - partColName:
-            columnCounter: d316d40c-eead-4de8-b419-fa51d8a59a65
-            stepCounter: 1e9ce886-a5ec-4493-8ad9-957a74e9d0f5
-    recordVersioning: Date Column and Time Column
+        - {}
+    recordVersioning: Datetime Column
     recordorderBy:
       items:
         - {}
@@ -47,20 +40,16 @@ operation:
   description: ""
   isMultisource: false
   locationName: TARGET_DB
-  materializationType: table
+  materializationType: dynamic iceberg table
   metadata:
     appliedNodeTests: []
     columns:
-      - acceptedValues:
-          strictMatch: true
-          values: []
-        appliedColumnTests: {}
+      - appliedColumnTests: {}
         columnReference:
-          columnCounter: ab424c0d-dae3-464f-8836-aae349612f33
+          columnCounter: 7f2a408d-7411-4470-8208-20eed1a30f65
           stepCounter: 1e9ce886-a5ec-4493-8ad9-957a74e9d0f5
         config: {}
         dataType: STRING
-        defaultValue: ""
         description: ""
         isSurrogateKey: true
         name: ICDT_DIM_PRODUCT_INVENTORY_DANDT_KEY
@@ -129,40 +118,6 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 6d36cf1d-ebd7-48ea-86b3-4a96712fd34c
-          stepCounter: 1e9ce886-a5ec-4493-8ad9-957a74e9d0f5
-        config: {}
-        dataType: TIMESTAMP
-        defaultValue: ""
-        description: ""
-        isSystemStartDate: true
-        name: RECORD_START_TIME
-        nullable: true
-        sourceColumnReferences:
-          - columnReferences: []
-            transform: "{% if config.recordVersioning not in ('Integer Column') %} {{ order_by_col().split(',')[0] }} {% else %} {{ order_by_col_int().split(',')[0] }} {% endif %}"
-      - acceptedValues:
-          strictMatch: true
-          values: []
-        appliedColumnTests: {}
-        columnReference:
-          columnCounter: 46da835c-3d2e-440a-8b48-aeb5bd5ab394
-          stepCounter: 1e9ce886-a5ec-4493-8ad9-957a74e9d0f5
-        config: {}
-        dataType: TIMESTAMP
-        defaultValue: ""
-        description: ""
-        isSystemEndDate: true
-        name: RECORD_END_TIME
-        nullable: true
-        sourceColumnReferences:
-          - columnReferences: []
-            transform: LEAD ( {% if config.recordVersioning not in ('Integer Column')%} {{ order_by_col().split(',')[0] }} {% else %} {{ order_by_col_int().split(',')[0] }} {% endif %} ) OVER (PARTITION BY {{ partition_by() }} ORDER BY {{ order_by_col() }} asc)
-      - acceptedValues:
-          strictMatch: true
-          values: []
-        appliedColumnTests: {}
-        columnReference:
           columnCounter: 39dfce0f-a5cd-44db-97ca-439ee4b7b908
           stepCounter: 1e9ce886-a5ec-4493-8ad9-957a74e9d0f5
         config: {}
@@ -192,6 +147,32 @@ operation:
         sourceColumnReferences:
           - columnReferences: []
             transform: FIRST_VALUE ( {% if config.recordVersioning not in ('Integer Column') %} {{ order_by_col().split(',')[0] }} {% else %} {{ order_by_col_int().split(',')[0] }} {% endif %} ) OVER (PARTITION BY {{ partition_by() }} ORDER BY {{ order_by_col() }} asc)
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 6f3d4c44-3402-439e-916e-3ef4abc6a034
+          stepCounter: 1e9ce886-a5ec-4493-8ad9-957a74e9d0f5
+        config: {}
+        dataType: TIMESTAMP
+        description: ""
+        isSystemStartDate: true
+        name: RECORD_START_TIME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: "{% if config.recordVersioning not in ('Integer Column') %} {{ order_by_col().split(',')[0] }} {% else %} {{ order_by_col_int().split(',')[0] }} {% endif %}"
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: b65cbb3e-e029-474b-9d0a-22c3d7fb18f5
+          stepCounter: 1e9ce886-a5ec-4493-8ad9-957a74e9d0f5
+        config: {}
+        dataType: TIMESTAMP
+        description: ""
+        isSystemEndDate: true
+        name: RECORD_END_TIME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: LEAD ( {% if config.recordVersioning not in ('Integer Column')%} {{ order_by_col().split(',')[0] }} {% else %} {{ order_by_col_int().split(',')[0] }} {% endif %} ) OVER (PARTITION BY {{ partition_by() }} ORDER BY {{ order_by_col() }} asc)
     cteString: ""
     enabledColumnTestIDs: []
     sourceMapping:
