@@ -1,0 +1,6 @@
+excludeSelector: ""
+fileVersion: 1
+id: "80"
+includeSelector: "{ location: TARGET_DB name: CSS_ORDERS } OR { location: TARGET_DB name: CDIM_ORDERS_TRANS } OR { location: TARGET_DB name: CT_ORDERS } OR { location: TARGET_DB name: CV_ORDERS } OR { location: TARGET_DB name: AP_ORDERS } OR { location: TARGET_DB name: DSM_ORDERS } OR { location: TARGET_DB name: DIM_ORDERS } OR { location: TARGET_DB name: ICDT_DIM_ORDERS } OR { location: TARGET_DB name: ICDT_LRV_ORDERS } OR { location: TARGET_DB name: ICDT_WRK_ORDERS } OR { location: TARGET_DB name: DMV_ORDERS } OR { location: TARGET_DB name: DT_DIM_ORDERS } OR { location: TARGET_DB name: TSKFCT_ORDERS } OR { location: TARGET_DB name: INC_ORDERS } OR { location: TARGET_DB name: INTTBL_ORDERS } OR { location: TARGET_DB name: MV_ORDERS } OR { location: TARGET_DB name: PSTG_ORDERS } OR { location: TARGET_DB name: ICT_ORDERS } OR { location: SOURCE_DATA name: ORDERS } OR { location: TARGET_DB name: SIM_ORDERS } OR { location: TARGET_DB name: WRK_ORDERS }"
+name: Test_Job
+type: Job
