@@ -1,0 +1,64 @@
+fileVersion: 1
+id: 2d98fcc9-33d2-4ab3-9d02-e2063af61075
+name: ICT_NODE_OLDV
+operation:
+  config:
+    catdb: my_cat_table
+    catint: icebergCatalogInt12
+    cattable: my_cat_table
+    extvolume: sficebergextvol1
+    metafilepath: CUSTOMERS/metadata/00002-d9c58081-b776-4cec-8a6e-f54f8330323f.metadata.json
+    predTask: TGCR_NODE
+    rootTask: TGCR_NODE
+    scheduleCRON: 5 0-23 * * * America/Los_Angeles
+    schedulePeriod: "60"
+    schedulePeriodOption: Predecessor
+    schedulingMode: Serverless Task
+    schrefresh: true
+    serverlessSize: MEDIUM
+    tcatalog: Object storage
+    whName: <WAREHOUSE_NAME>
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: TARGET_DB
+  materializationType: external iceberg table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: e98b8418-3952-41b8-ae27-fb929a84daf4
+          stepCounter: 2d98fcc9-33d2-4ab3-9d02-e2063af61075
+        config: {}
+        dataType: STRING
+        defaultValue: ""
+        description: ""
+        dummycolumn: true
+        name: DATA
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: This column is not part of target iceberg table
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases: {}
+        customSQL:
+          customSQL: ""
+        dependencies: []
+        join:
+          joinCondition: ""
+        name: ICT_NODE_OLDV
+        noLinkRefs: []
+  name: ICT_NODE_OLDV
+  overrideSQL: false
+  schema: ""
+  sqlType: IT:::307
+  type: sql
+  version: 1
+type: Node

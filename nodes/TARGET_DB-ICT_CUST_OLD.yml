@@ -16,7 +16,7 @@ operation:
         - period: Hours
           value: "60"
     extvolume: sficebergextvol1
-    maxServerlessSize: 6. XXLARGE
+    maxServerlessSize: 3. MEDIUM
     metafilepath: CUSTOMERS/metadata/00002-d9c58081-b776-4cec-8a6e-f54f8330323f.metadata.json
     minServerlessSize: 1. XSMALL
     numFailures: "0"
@@ -28,7 +28,7 @@ operation:
     schedulePeriodOption: Predecessor
     schedulingMode: Serverless Task
     schrefresh: true
-    serverlessSize: 6. XXLARGE
+    serverlessSize: 3. MEDIUM
     sizeBoundToggle: true
     spfcUserToggle: true
     succIntName: my_sns_integration
