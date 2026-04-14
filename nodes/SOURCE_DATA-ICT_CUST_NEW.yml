@@ -1,28 +1,47 @@
 fileVersion: 1
-id: 064a2dcf-5b02-4981-9de9-87ec552764f4
-name: EXT_ICT_CUST
+id: d7c9d1fd-0b69-45c8-a11a-d9f89f90bb60
+name: ICT_CUST_NEW
 operation:
   config:
-    catdb: my_cat_table
+    autoRetryToggle: false
+    autoSuspendToggle: true
+    catdb: CUST/metadata/00000-7f231169-964c-4cf4-a929-b94eb570b404.metadata.json
     catint: icebergCatalogInt12
     cattable: my_cat_table
+    configJSON: "{\"environment\":\"production\", \"dir\":\"/my_prod_directory/\"}"
+    errIntName: ""
+    errNotifyToggle: true
+    execTime:
+      items:
+        - period: Hours
+          value: "60"
     extvolume: sficebergextvol1
-    metafilepath: CUST/metadata/00000-7f231169-964c-4cf4-a929-b94eb570b404.metadata.json
+    maxServerlessSize: 3. MEDIUM
+    metafilepath: CUSTOMERS/metadata/00002-d9c58081-b776-4cec-8a6e-f54f8330323f.metadata.json
+    minServerlessSize: 3. MEDIUM
+    numFailures: "10"
+    overlapExecToggle: true
     predTask: TGCR_NODE
+    retryAttmpt: "0"
     rootTask: TGCR_NODE
     scheduleCRON: 5 0-23 * * * America/Los_Angeles
-    schedulePeriod: "60"
-    schedulePeriodOption: Predecessor
-    schedulingMode: Warehouse Task
+    schedulePeriodOption: Minutes
+    schedulingMode: Serverless Task
     schrefresh: true
-    serverlessSize: MEDIUM
+    serverlessSize: 3. MEDIUM
+    sizeBoundToggle: true
+    spfcUserToggle: true
+    succIntName: my_sns_integration
+    successNotifyToggle: true
+    taskGraphToggle: false
     tcatalog: Object storage
-    whName: compute_wh
+    userName: tkamat
+    whName: <WAREHOUSE_NAME>
   database: ""
   deployEnabled: true
-  description: ""
+  description: test cust
   isMultisource: false
-  locationName: TARGET_DB
+  locationName: SOURCE_DATA
   materializationType: external iceberg table
   metadata:
     appliedNodeTests: []
@@ -32,8 +51,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: c3f6c39f-8a28-4cd8-91e0-5dc0142b5eb7
-          stepCounter: 064a2dcf-5b02-4981-9de9-87ec552764f4
+          columnCounter: 49398018-d6c0-4210-aded-3c6d27dc66ba
+          stepCounter: d7c9d1fd-0b69-45c8-a11a-d9f89f90bb60
         config: {}
         dataType: NUMBER(38,0)
         defaultValue: ""
@@ -51,10 +70,10 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 3a476ea8-7668-4c24-bb56-30987581e5a1
-          stepCounter: 064a2dcf-5b02-4981-9de9-87ec552764f4
+          columnCounter: 2196a7ad-3582-40d9-948f-8de610bb7f35
+          stepCounter: d7c9d1fd-0b69-45c8-a11a-d9f89f90bb60
         config: {}
-        dataType: VARCHAR(16777216)
+        dataType: VARCHAR(134217728)
         defaultValue: ""
         description: ""
         name: C_NAME
@@ -70,10 +89,10 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: e9759e42-b341-4d48-9d3b-6c5e43565596
-          stepCounter: 064a2dcf-5b02-4981-9de9-87ec552764f4
+          columnCounter: 2d2067ba-086b-440c-9a13-dcafcf48113e
+          stepCounter: d7c9d1fd-0b69-45c8-a11a-d9f89f90bb60
         config: {}
-        dataType: VARCHAR(16777216)
+        dataType: VARCHAR(134217728)
         defaultValue: ""
         description: ""
         name: C_ADDRESS
@@ -89,8 +108,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: ed2c8f86-2b95-4f29-8e92-f636a7510c0e
-          stepCounter: 064a2dcf-5b02-4981-9de9-87ec552764f4
+          columnCounter: 42b36bba-1273-4af9-8519-dba2fa477ab3
+          stepCounter: d7c9d1fd-0b69-45c8-a11a-d9f89f90bb60
         config: {}
         dataType: NUMBER(38,0)
         defaultValue: ""
@@ -108,10 +127,10 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 47386da3-83d5-417d-a660-92742a19950a
-          stepCounter: 064a2dcf-5b02-4981-9de9-87ec552764f4
+          columnCounter: 19a4dcc2-0a35-41c7-9675-9e45d66b9313
+          stepCounter: d7c9d1fd-0b69-45c8-a11a-d9f89f90bb60
         config: {}
-        dataType: VARCHAR(16777216)
+        dataType: VARCHAR(134217728)
         defaultValue: ""
         description: ""
         name: C_PHONE
@@ -127,8 +146,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: cd6e9f3a-e21d-4532-8aca-50fc272c54c5
-          stepCounter: 064a2dcf-5b02-4981-9de9-87ec552764f4
+          columnCounter: c6a5ac5c-1051-4642-ac50-44bffd706950
+          stepCounter: d7c9d1fd-0b69-45c8-a11a-d9f89f90bb60
         config: {}
         dataType: NUMBER(12,2)
         defaultValue: ""
@@ -146,10 +165,10 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 76561d78-a7ae-42a3-876d-d3c3adc53d31
-          stepCounter: 064a2dcf-5b02-4981-9de9-87ec552764f4
+          columnCounter: 9c7362ce-43e8-427b-ad57-9adfb9342bf2
+          stepCounter: d7c9d1fd-0b69-45c8-a11a-d9f89f90bb60
         config: {}
-        dataType: VARCHAR(16777216)
+        dataType: VARCHAR(134217728)
         defaultValue: ""
         description: ""
         name: C_MKTSEGMENT
@@ -165,10 +184,10 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 2d82d61e-eec7-4162-8f5d-43f4ff7003e1
-          stepCounter: 064a2dcf-5b02-4981-9de9-87ec552764f4
+          columnCounter: 4f297647-5c8f-479f-899a-612e9c224d05
+          stepCounter: d7c9d1fd-0b69-45c8-a11a-d9f89f90bb60
         config: {}
-        dataType: VARCHAR(16777216)
+        dataType: VARCHAR(134217728)
         defaultValue: ""
         description: ""
         name: C_COMMENT
@@ -184,8 +203,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 49a9efe9-3732-4408-be00-39a329c3c831
-          stepCounter: 064a2dcf-5b02-4981-9de9-87ec552764f4
+          columnCounter: 069c4189-7141-42a0-a2da-cd52eb073fce
+          stepCounter: d7c9d1fd-0b69-45c8-a11a-d9f89f90bb60
         config: {}
         dataType: TIMESTAMP_NTZ(6)
         defaultValue: ""
@@ -207,9 +226,9 @@ operation:
         dependencies: []
         join:
           joinCondition: ""
-        name: EXT_ICT_CUST
+        name: ICT_CUST_NEW
         noLinkRefs: []
-  name: EXT_ICT_CUST
+  name: ICT_CUST_NEW
   overrideSQL: false
   schema: ""
   sqlType: "307"

@@ -6,6 +6,10 @@ operation:
     catdb: my_cat_table
     catint: icebergCatalogInt12
     cattable: my_cat_table
+    execTime:
+      items:
+        - period: Minutes
+          value: "60"
     extvolume: sficebergextvol1
     metafilepath: ORDERSM/metadata/00000-c05d375c-7f1f-425c-a1a9-fddcfa9dad67.metadata.json
     predTask: DATA_TRANSFORMATION_ROOT_TASK
