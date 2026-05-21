@@ -8,6 +8,14 @@ does not permit copying or modification for any other purpose.
 {# == Node Type Name           : External Iceberg REST table == #}
 {# == Node Type Description    : Points to External Iceberg table and enables Insertion == #}
 
+{# == To run data quality tests before data insertion == #}
+{% for test in node.tests if config.testsEnabled %}
+    {% if test.runOrder == 'Before' %}
+        {{ test_stage(test.name, test.continueOnFailure) }}
+        {{ test.templateString }}
+    {% endif %}
+{% endfor %}
+
 {%- if config.schrefresh == false %}
     {% if config.truncateBefore %}
         {{ stage('Truncate Iceberg Table') }}
@@ -48,3 +56,20 @@ does not permit copying or modification for any other purpose.
     SELECT 1 AS INFO_MESSAGE WHERE FALSE
     
 {%- endif %}
+
+{# == To run data quality tests after data insertion == #}
+{% if config.testsEnabled %}
+	{% for test in node.tests %}
+		{% if test.runOrder == 'After' %}
+			{{ test_stage(test.name, test.continueOnFailure) }}
+			{{ test.templateString }}
+        {% endif %}
+	{% endfor %}
+
+	{% for column in columns %}
+		{% for test in column.tests %}
+			{{ test_stage(column.name + ": " + test.name) }}
+			{{ test.templateString }}
+		{% endfor %}
+	{% endfor %}
+{% endif %}

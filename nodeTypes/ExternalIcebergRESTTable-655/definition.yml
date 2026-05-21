@@ -66,7 +66,7 @@ metadata:
         isRequired: false
         default: true
 
-      - displayName: Scheduled Run
+      - displayName: Schedule Run
         attributeName: schrefresh
         type: toggleButton
         isRequired: false
