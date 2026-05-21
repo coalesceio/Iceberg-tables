@@ -1,31 +1,46 @@
 fileVersion: 1
-id: dd2d0832-2138-4faf-adb4-18756ee3eafa
-name: EXT_ICT_TASK
+id: 207d3bec-00a7-41c9-b7fa-4a5df01c351e
+name: SF_ICT_NATION_1
 operation:
   config:
-    catdb: my_cat_table
-    catint: icebergCatalogInt12
-    cattable: my_cat_table
+    autoRetryToggle: false
+    autoSuspendToggle: false
+    catdb: ""
+    catint: ICEBERG_GLUE_RESTAPI_CATALOG
+    cattable: ice_nation
+    configJSON: ""
+    errIntName: ""
+    errNotifyToggle: false
     execTime:
-      items: []
-    extvolume: sficebergextvol1
-    metafilepath: Productict/metadata/00001-4176d45f-0365-49a7-aa18-84149c397844.metadata.json
+      items:
+        - {}
+    extvolume: ICEBERG_S3_RESTAPI_VOLUME
+    maxServerlessSize: 6. XXLARGE
+    minServerlessSize: 1. XSMALL
+    numFailures: "10"
+    overlapExecToggle: false
     predTask: DATA_TRANSFORMATION_ROOT_TASK
+    retryAttmpt: "0"
     rootTask: DATA_TRANSFORMATION_ROOT_TASK
     scheduleCRON: 5 0-23 * * * America/Los_Angeles
-    schedulePeriod: "6000"
-    schedulePeriodOption: Minutes
+    schedulePeriodOption: Predecessor
     schedulingMode: Warehouse Task
     schrefresh: true
-    serverlessSize: MEDIUM
-    tcatalog: Object storage
+    serverlessSize: 3. MEDIUM
+    sizeBoundToggle: false
+    spfcUserToggle: false
+    succIntName: ""
+    successNotifyToggle: false
+    taskGraphToggle: false
+    tcatalog: AWS Glue
+    userName: ""
     whName: <WAREHOUSE_NAME>
   database: ""
   deployEnabled: true
   description: ""
   isMultisource: false
-  locationName: SOURCE_DATA
-  materializationType: external iceberg table
+  locationName: TARGET_DB
+  materializationType: iceberg table
   metadata:
     appliedNodeTests: []
     columns:
@@ -34,32 +49,13 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 557e3150-eb1d-412e-accf-116b6c50d14b
-          stepCounter: dd2d0832-2138-4faf-adb4-18756ee3eafa
+          columnCounter: b3b75dd6-f836-4240-a9ed-66cc8f1d90fc
+          stepCounter: 207d3bec-00a7-41c9-b7fa-4a5df01c351e
         config: {}
         dataType: NUMBER(38,0)
         defaultValue: ""
         description: ""
-        name: PRODUCT_ID
-        nullable: false
-        primaryKey: false
-        sourceColumnReferences:
-          - columnReferences: []
-            transform: ""
-        transform: ""
-        uniqueKey: false
-      - acceptedValues:
-          strictMatch: true
-          values: []
-        appliedColumnTests: {}
-        columnReference:
-          columnCounter: 052a432b-33fe-45c8-9feb-69d4132239b7
-          stepCounter: dd2d0832-2138-4faf-adb4-18756ee3eafa
-        config: {}
-        dataType: VARCHAR(16777216)
-        defaultValue: ""
-        description: ""
-        name: PRODUCT_NAME
+        name: N_NATIONKEY
         nullable: true
         primaryKey: false
         sourceColumnReferences:
@@ -72,13 +68,13 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 77dee6ce-8945-47ea-8375-46ffd2dc475e
-          stepCounter: dd2d0832-2138-4faf-adb4-18756ee3eafa
+          columnCounter: dc87bca1-bf40-447b-92c6-2d9767d33512
+          stepCounter: 207d3bec-00a7-41c9-b7fa-4a5df01c351e
         config: {}
-        dataType: VARCHAR(16777216)
+        dataType: VARCHAR(134217728)
         defaultValue: ""
         description: ""
-        name: BRAND
+        name: N_NAME
         nullable: true
         primaryKey: false
         sourceColumnReferences:
@@ -91,13 +87,32 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 01976c31-c506-40db-82ae-6d5853a3217a
-          stepCounter: dd2d0832-2138-4faf-adb4-18756ee3eafa
+          columnCounter: 45de6315-498f-4b2a-8d5e-f0e8b559b7c7
+          stepCounter: 207d3bec-00a7-41c9-b7fa-4a5df01c351e
         config: {}
-        dataType: VARCHAR(16777216)
+        dataType: NUMBER(38,0)
         defaultValue: ""
         description: ""
-        name: COLOUR
+        name: N_REGIONKEY
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 95a9a474-d644-49e2-8981-0d1a7eb7a6a0
+          stepCounter: 207d3bec-00a7-41c9-b7fa-4a5df01c351e
+        config: {}
+        dataType: VARCHAR(134217728)
+        defaultValue: ""
+        description: ""
+        name: N_COMMENT
         nullable: true
         primaryKey: false
         sourceColumnReferences:
@@ -114,12 +129,12 @@ operation:
         dependencies: []
         join:
           joinCondition: ""
-        name: EXT_ICT_TASK
+        name: SF_ICT_NATION_1
         noLinkRefs: []
-  name: EXT_ICT_TASK
+  name: SF_ICT_NATION_1
   overrideSQL: false
   schema: ""
-  sqlType: "307"
+  sqlType: "655"
   type: sql
   version: 1
 type: Node

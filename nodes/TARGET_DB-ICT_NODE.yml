@@ -1,32 +1,46 @@
 fileVersion: 1
-id: b9c19ae0-6b48-4daa-81fe-da86b643d0e3
-name: EXT_ICT_ORDERS
+id: 3fb30769-ac65-4fe0-8f74-699328694202
+name: ICT_NODE
 operation:
   config:
-    catdb: my_cat_table
-    catint: icebergCatalogInt12
-    cattable: my_cat_table
+    autoRetryToggle: false
+    autoSuspendToggle: false
+    catdb: ""
+    catint: ""
+    cattable: ""
+    configJSON: ""
+    errIntName: ""
+    errNotifyToggle: false
     execTime:
       items:
-        - period: Minutes
-          value: "60"
-    extvolume: sficebergextvol1
-    metafilepath: ORDERSM/metadata/00000-c05d375c-7f1f-425c-a1a9-fddcfa9dad67.metadata.json
+        - {}
+    extvolume: ""
+    maxServerlessSize: 6. XXLARGE
+    metafilepath: metafilepath/
+    minServerlessSize: 1. XSMALL
+    numFailures: "10"
+    overlapExecToggle: false
     predTask: DATA_TRANSFORMATION_ROOT_TASK
+    retryAttmpt: "0"
     rootTask: DATA_TRANSFORMATION_ROOT_TASK
     scheduleCRON: 5 0-23 * * * America/Los_Angeles
-    schedulePeriod: "600"
-    schedulePeriodOption: Minutes
-    schedulingMode: Serverless Task
-    schrefresh: true
-    serverlessSize: MEDIUM
-    tcatalog: Object storage
+    schedulePeriodOption: Predecessor
+    schedulingMode: Warehouse Task
+    schrefresh: false
+    serverlessSize: 3. MEDIUM
+    sizeBoundToggle: false
+    spfcUserToggle: false
+    succIntName: ""
+    successNotifyToggle: false
+    taskGraphToggle: false
+    tcatalog: AWS Glue
+    userName: ""
     whName: <WAREHOUSE_NAME>
   database: ""
   deployEnabled: true
   description: ""
   isMultisource: false
-  locationName: SOURCE_DATA
+  locationName: TARGET_DB
   materializationType: external iceberg table
   metadata:
     appliedNodeTests: []
@@ -36,8 +50,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 8632d35c-534f-4f12-9203-2aae479a7014
-          stepCounter: b9c19ae0-6b48-4daa-81fe-da86b643d0e3
+          columnCounter: f8754afa-c874-4c7c-88f8-78710e5a34bd
+          stepCounter: 3fb30769-ac65-4fe0-8f74-699328694202
         config: {}
         dataType: STRING
         defaultValue: ""
@@ -57,9 +71,9 @@ operation:
         dependencies: []
         join:
           joinCondition: ""
-        name: EXT_ICT_ORDERS
+        name: ICT_NODE
         noLinkRefs: []
-  name: EXT_ICT_ORDERS
+  name: ICT_NODE
   overrideSQL: false
   schema: ""
   sqlType: "307"

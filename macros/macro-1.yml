@@ -332,5 +332,52 @@ macroString: |-
       {%- endif %}
 
   {%- endmacro %}
+
+  {####################################################################################################################################
+  Input: 
+      parameterValue  (string)  - Environment parameter value e.g. parameters.targetTaskSuccessIntegration
+      devFallback     (string)  - Fallback value to use when parameterValue is 'DEV ENVIRONMENT' e.g. config.succIntName
+      prefix          (string)  - SQL keyword prefix for the output e.g. 'SUCCESS_INTEGRATION'
+
+  Output: 
+      Returns a full SQL parameter assignment string e.g. SUCCESS_INTEGRATION = MY_INTEGRATION
+
+  Description:
+      Generalised macro to handle environment-aware parameter resolution.
+  ####################################################################################################################################}
+  {%- macro parameter_check(parameterValue, devFallback) -%}
+      {%- if devFallback | default('') | length > 0 -%}
+          {{ devFallback | trim }}
+      {%- elif parameterValue | default('') | length > 0 and parameterValue != 'DEV ENVIRONMENT' -%}
+          {{ parameterValue | trim }}
+      {%- endif -%}
+  {%- endmacro -%}
+
+  {####################################################################################################################################
+  Input:
+      None — reads directly from config.orderby and config.orderbycolumn
+
+  Output:
+      Returns a full ORDER BY clause e.g. ORDER BY "COL1" ASC, "COL2" DESC
+      Returns nothing if config.orderby is false or no columns defined.
+
+  Description:
+      Builds an ORDER BY clause from the sort columns and sort orders defined in node config.
+      Iterates over config.orderbycolumn items and concatenates column names with sort order.
+      Returns empty string if orderby toggle is off.
+
+  Example:
+      sortorder_by_colv()
+      → ORDER BY "EMP_ID" ASC, "CREATED_AT" DESC
+  ####################################################################################################################################}
+  {%- macro sortorder_by_colv() -%}
+      {%- if config.orderby -%}
+          {%- set ns = namespace(cols=[]) -%}
+          {%- for i in config.orderbycolumn.get('items') -%}
+              {%- set ns.cols = ns.cols + ['"' + i.sortColName.name + '" ' + i.sortOrder] -%}
+          {%- endfor -%}
+          ORDER BY {{ ns.cols | join(', ') }}
+      {%- endif -%}
+  {%- endmacro -%}
 name: macro
 type: Macro
