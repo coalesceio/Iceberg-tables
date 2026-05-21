@@ -12,6 +12,7 @@ By combining open data lake storage with Snowflake’s compute, optimization, an
 
 * [Snowflake Iceberg table](#snowflake-iceberg-table)
 * [External Iceberg table](#external-iceberg-table)
+* [External Iceberg RW table](#external-iceberg-rw-table)
 * [Copy-Into Iceberg table](#copy-into-iceberg-table)
 * [Snowpipe Iceberg table](#snowpipe-iceberg-table)
 * [Dynamic Iceberg Work table](#Dynamic-Iceberg-Work-table)
@@ -201,9 +202,9 @@ If schedule refresh mode is set to true then Task Scheduling Options can be used
 
 ### External Iceberg Table With Task Deployment Parameters
 
-* **targetTaskWarehouse**: Alows you to specify a different warehouse used to run a task in different environments. Default value: `DEV ENVIRONMENT`
+* **targetTaskWarehouse**: Alows you to specify a different wa **targetTaskWarehouse**: Alows you to specify a different warehouse used to run a task in different environments. Default value: `DEV ENVIRONMENT`
 
-When set to `DEV ENVIRONMENT` the value entered in the **Task Scheduling Options > Select Warehouse on which to run the task** will be used when creating the task.
+When set to `DEV ENVIRONMENT` the value entered in the **Task Scheduling Options > Run Task Warehouse** will be used when creating the task.
 
 ```json
 {
@@ -221,7 +222,322 @@ For example, with the below setting for the parameter in a QA environment, the t
 }
 ```
 
+* **targetTaskExecuteAsUser**: Allows you to specify a different user to execute the task across environments. Default value: `DEV ENVIRONMENT`
+
+When set to `DEV ENVIRONMENT`, the value entered in **Task Scheduling Options > Execute As** is used when creating the task.
+
+```json
+{
+    "targetTaskExecuteAsUser": "DEV ENVIRONMENT"
+}
+```
+
+When set to any other value, the task is created to execute as the specified Snowflake user.
+
+```json
+{
+    "targetTaskExecuteAsUser": "xxxxxx"
+}
+```
+
+* **targetTaskErrorIntegration**: Allows you to specify a different error notification integration across environments. Default value: `DEV ENVIRONMENT`
+
+When set to `DEV ENVIRONMENT`, the value entered in **Task Scheduling Options > Error Integration** is used when creating the task.
+
+```json
+{
+    "targetTaskErrorIntegration": "DEV ENVIRONMENT"
+}
+```
+
+When set to any other value, the task is created using the specified Snowflake notification integration for error handling.
+
+```json
+{
+    "targetTaskErrorIntegration": "my_error_integration"
+}
+```
+
+* **targetTaskSuccessIntegration**: Allows you to specify a different success notification integration across environments. Default value: `DEV ENVIRONMENT`
+
+When set to `DEV ENVIRONMENT`, the value entered in **Task Scheduling Options > Success Integration** is used when creating the task.
+
+```json
+{
+    "targetTaskSuccessIntegration": "DEV ENVIRONMENT"
+}
+```
+
+When set to any other value, the task is created using the specified Snowflake notification integration for success handling.
+
+```json
+{
+    "targetTaskSuccessIntegration": "my_success_integration"
+}
+```
+
 ### External Iceberg Table Initial Deployment
+
+When deployed for the first time into an environment the External Iceberg Table node will execute three stages dependent on whether or not the task schedule relies on a predecessor task.
+
+**External Iceberg Table No Predecessor Task Deployment**
+
+| **Stage** | **Description** |
+|----------|---------------|
+| **Create Iceberg Table** | This stage will execute a `CREATE` OR `REPLACE` statement and create a Iceberg Table in the target environment. |
+| **Create Task** | This stage will create a task that will load the target table on the schedule specified. |
+| **Resume Task** | After the task has been created it needs to be resume so that the task runs on the schedule. |
+
+**External Iceberg Table Predecessor Task Deployment**
+
+| **Stage** | **Description** |
+|----------|---------------|
+| **Create Iceberg Table** | This stage will execute a `CREATE` OR `REPLACE` statement and create a Iceberg Table in the target environment. |
+| **Suspend Root Task** | To add a task into a DAG of task the root task needs to be put into a suspended state. |
+| **Create Task** | This stage will create a task that will load the target table on the schedule specified. |
+
+If a task is part of a DAG of tasks, the DAG needs to include a node type called **Task Dag Resume Root**. This node will resume the root node once all the dependent tasks have been created as part of a deployment.
+
+The task node has no ALTER capabilities. All task enabled nodes are CREATE OR REPLACE only though this is subject to change.
+
+### External Iceberg Table Redeployment
+
+If any changes in config options like external volume, base location, node properties, or column results in recreating the Iceberg table during redeployment.
+
+#### Recreating the External Snowflake Iceberg Table
+
+| **Stage** | **Description** |
+|----------|---------------|
+| **Create Iceberg Table** | This stage will execute a `CREATE` OR `REPLACE` statement and create a Iceberg Table in the target environment. |
+
+#### External Iceberg Table Recreating the Task Redeployment
+
+After the Task has deployed for the first time into a target environment, subsequent deployments with changes in task schedule, warehouse, or scheduling options will result in a `CREATE TASK`AND `RESUME TASK` statements being issued.
+
+The following stages are executed.
+
+**External Iceberg Table No Predecessor Task Redeployment**
+
+| **Stage** | **Description** |
+|----------|---------------|
+| **Create Task** | This stage will create a task that will load the target table on the schedule specified. |
+| **Resume Task** | After the task has been created it needs to be resume so that the task runs on the schedule. |
+
+**External Iceberg Table Predecessor Task Redeployment**
+
+| **Stage** | **Description** |
+|----------|---------------|
+| **Suspend Root Task** | To add a task into a DAG of task the root task needs to be put into a suspended state. |
+| **Create Task** | This stage will create a task that will load the target table on the schedule specified. |
+
+### Redeployment with no changes 
+
+If the nodes are redeployed with no changes compared to previous deployment,then no stages are executed
+
+### External Iceberg Table Undeployment
+
+If a Snowflake iceberg table with task is dropped from the workspace and commited to Git results in table and task dropped from target environment.
+
+The following stages are executed.
+
+**External Iceberg Table No Predecessor Task Dropped**
+
+| **Stage** | **Description** |
+|----------|---------------|
+| **Drop Iceberg Table** | Drop Iceberg Table |
+| **Drop Current Task** | This stage will drop the task. |
+
+**External Iceberg table Predecessor Task Dropped**
+
+| **Stage** | **Description** |
+|----------|---------------|
+| **Drop Iceberg Table** | Drop Iceberg Table |
+| **Suspend Root Task** | To drop a task from a DAG of task the root task needs to be put into a suspended state. |
+| **Drop Task** | This stage will drop the task. |
+
+---
+
+## External Iceberg RW Table
+
+External Iceberg RW table node is an external Iceberg table node wrapped with task functionality.
+
+An Iceberg table uses the Apache Iceberg open table format specification, which provides an abstraction layer on data files stored in open formats. [Iceberg tables](https://docs.snowflake.com/en/user-guide/tables-iceberg) for Snowflake combine the performance and query semantics of regular Snowflake tables with external cloud storage that you manage. They are ideal for existing data lakes that you cannot, or choose not to, store in Snowflake.
+
+An Iceberg table that uses an external catalog provides limited Snowflake platform support with read-only access. Snowflake added write support for externally managed Iceberg tables — including AWS Glue — in October 2025 (GA; Preview began July 2025). With this table type, Snowflake uses a catalog integration to retrieve information about your Iceberg metadata and schema and also write data to AWS Glue-managed Apache Iceberg tables from Coalesce.
+
+You can use this option to create an Iceberg table registered in the AWS Glue Data Catalog and load data into them. Currently supports INSERT only loads.
+
+### External Iceberg RW Table Prerequisites
+
+* The Role in the Workspace and Environment properties of Coalesce should be `ACCOUNTADMIN` in order to successfully create an Iceberg table. You can also grant `SYSADMIN` roles to `EXTERNAL VOLUME`, `CATALOG INTEGRATION` created.
+* A Snowflake Catalog Integration configured with `CATALOG_SOURCE = ICEBERG_REST` and `CATALOG_API_TYPE = AWS_GLUE` using SigV4 authentication.
+* An AWS IAM role with read and write permissions on the target AWS Glue Data Catalog and the underlying S3 location.
+* A Snowflake External Volume configured with `ALLOW_WRITES = TRUE`  pointing to the target S3 location.
+* Either catalog-vended credentials or a storage integration configured for Snowflake to access the underlying S3 data.
+
+### External Iceberg RW Table Configuration
+
+* [External Iceberg RW Table Node Properties](#external-iceberg-rw-table-node-properties)
+* [External Iceberg RW Table Options](#external-iceberg-rw-table-options)
+* [External Iceberg RW Table Scheduling Options](#external-iceberg-rw-table-task-scheduling-options)
+* [External Iceberg RW Table System Columns](#external-iceberg-rw-table-system-columns)
+
+### External Iceberg RW Table Node Properties
+
+| **Property** | **Description** |
+|-------------|-----------------|
+| **Storage Location** (required) | Storage Location where the Iceberg RW Table will be created. |
+| **Node Type** (required) | Name of template used to create node objects. |
+| **Deploy Enabled** (required) | If TRUE the node will be deployed or redeployed when changes are detected.<br/>If FALSE the node will not be deployed or the node will be dropped during redeployment. |
+
+### External Iceberg RW Table Create Options
+
+| **Options** | **Description** |
+|-------------|-----------------|
+| **Create As** | Create as - iceberg table |
+| **Type of Catalog** | Specify the type of catalog:<br/>- AWS Glue |
+| **External Volume** | Specifies the identifier (name) for the external volume where the Iceberg table stores its metadata files and data in Parquet format. [External volume](https://docs.snowflake.com/sql-reference/sql/create-external-volume) needs to be created in Snowflake as a prerequisite. |
+| **REST Catalog** | Specifies the identifier (name) of the [REST Catalog Integration - Glue](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration-rest-glue) for this table. |
+| **Catalog Namespace** | Optionally specifies the namespace (for example, `my_glue_database`) for the AWS Glue Data Catalog source. Option available if AWS Glue catalog is chosen. |
+| **Catalog Table Name** | Name of the catalog table. Option available if AWS Glue catalog is chosen. |
+| **Auto Refresh Metadata** | Table will use automated metadata refreshes if set to TRUE |
+| **Schedule Run** | True or False toggle that determines whether a task will be created or if the SQL to be used in the task will execute DML as a Run action. Prior to creating a task, it is helpful to test the SQL the task will execute to make sure it runs without errors and returns the expected data.<br/>- **False** - A table will be created and SQL will execute as a Run action.<br/>- **True** - After sufficiently testing the SQL as a Run action, setting Schedule refresh Mode to true will wrap the SQL statement in a task with options specified in Scheduling Options.<br/>When Run is executed, a message appears prompting the user to wait for the load to occur. |
+
+### External Iceberg RW Table Load Options
+
+| **Setting** | **Description** |
+|---------|-------------|
+| **Enable tests** | Toggle: True/False<br/>Determines if tests are enabled |
+| **Truncate Before** | Toggle: True/False<br/>Determines whether the table is truncated before execution.<br/>**True**: Table is truncated before the DML operation runs.<br/>**False**: The DML operation runs without truncation. |
+| **Distinct** | Toggle: True/False<br/>**True**: Group by All is invisible. DISTINCT data is chosen for processing.<br/>**False**: Group by All is visible. |
+| **Group by All** | Toggle: True/False<br/>**True**: DISTINCT is invisible, data grouped by all columns<br/>**False**: DISTINCT is visible |
+| **Order By** | Toggle: True/False<br/>**True**: Sort column and sort order drop down are visible and are required to form order by clause. <br/>**False**: Sort options invisible |
+
+### External Iceberg RW Table Task Scheduling Options
+
+If schedule refresh mode is set to true then Task Scheduling Options can be used to configure how and when the task will run.
+
+| **Options** | **Description** |
+|-------------|------------------------|
+| **Scheduling Mode** | **Warehouse Task** - User managed warehouse will execute tasks<br/>**Serverless Task** - Utilize serverless compute to execute tasks |
+| **Run Task Warehouse** | Enter the name of the warehouse you want the task to run on without quotes<br/>*(Visible if Scheduling Mode is set to Warehouse Task)* |
+| **Select initial serverless Warehouse size** | Select the initial compute size on which to run the task. Snowflake will adjust size from there based on target schedule and task run times<br/>*(Visible when Scheduling Mode is set to Serverless Task)* |
+| **Enable Size Bounds** | Toggle to set explicit limits on serverless scaling. (Visible if **Serverless Task** is selected).<br/>**Validation Rules:**<br/>- Min size must be ≤ Initial size<br/>- Max size must be ≥ Initial size<br/>- Min size must be ≤ Max size |
+| **Minimum Warehouse Size** | The smallest compute size allowed for the task (e.g., 1. XSMALL). |
+| **Maximum Warehouse Size** | The largest compute size allowed for the task (e.g., 6. XXLARGE). |
+| **Task Schedule** | **Minutes** - Allows you to specify a minute interval for running task<br/>**Cron** - Allows you to specify a CRON schedule for running task<br/>**Predecessor** - Allows you to specify a predecessor task to determine when a task should execute |
+| **Execution Time** | The specific duration for the task run limit. Supported ranges:<br/>- **SECONDS**: 10 - 691200<br/>- **MINUTES**: 1 - 11520<br/>- **HOURS**: 1 - 192 <br/>*Note: For upgrades from version 3.1.0 or earlier, ensure the scheduling configuration is manually updated to align with the new tabular input format.*|
+| **Enter task schedule using Cron** | Specifies a cron expression and time zone for periodically running the task. Supports a subset of standard cron utility syntax<br/>*(Only visible when Task Schedule is set to Cron)* |
+| **Enter predecessor tasks separated by a comma** | One or more task names that precede the task being created in the current node. Task names are case sensitive and should not be quoted and must exist in the same schema in which the current task is being created. If there are multiple predecessor tasks separate the task names using a comma and no spaces<br/>*(Only visible when Task Schedule is set to Predecessor)* |
+| **Enter root task name** | Name of the root task that controls scheduling for the DAG of tasks. Task names are case sensitive, should not be quoted and must exist in the same schema in which the current task is being created. If there are multiple predecessor tasks separate the task names using a comma and no spaces |
+
+### External Iceberg RW Table Advanced Scheduling Options
+
+<img width="776" height="744" alt="image" src="https://github.com/user-attachments/assets/ab28860c-0115-4ca5-9b57-8e1f719ad37a" />
+
+| **Option** | **Description** |
+|------------|----------------|
+| **Execute As Specific User** | Toggle to run on behalf of another user. Requires `GRANT IMPERSONATE` privileges. |
+| **User Name** | The specific user account name used when **Execute As Specific User** is enabled. |
+| **Allow Overlapping Execution** | Allows a new instance of the task to start if the previous one is still running. |
+| **Enable Task Graph Config** | Enables a text box to provide **Configuration JSON** for the task graph. |
+| **Auto-Suspend After Failures** | Automatically suspends the task after a set number of consecutive failures. |
+| **Number of Consecutive Failures** | Set the threshold (0 - No Limit) before the task is automatically suspended. <br/>- When toggle is OFF: Parameter is not included (uses Snowflake default of 10).<br/>- When toggle is ON with value 0: **Disables** auto-suspension.<br/>- When toggle is ON with value > 0: **Suspends** after that many consecutive failures. |
+| **Enable Auto-Retry** | Toggle to automatically retry the task if it fails. |
+| **Retry Attempts** | Specify the number of retry attempts allowed (Range: 0 - 30). |
+
+### External Iceberg Table Notification Options
+
+<img width="785" height="371" alt="image" src="https://github.com/user-attachments/assets/d0aae222-cfcb-4497-a572-3fa7079287c8" />
+
+| **Option** | **Description** |
+|------------|----------------|
+| **Enable Error Notifications** | Toggle to send alerts on failure. Requires an **Error Integration Name**. |
+| **Enable Success Notifications** | Toggle to send alerts on success. Requires a **Success Integration Name**. |
+
+> **Note:** Options under **Advanced Scheduling Options** and **Notification Options** (Execution Time, Overlapping Execution, Auto-Suspend, Auto-Retry, etc.) are only applicable to **Root** and **Independent** tasks. The only exception is **Execute As Specific User**, which can be configured for any task in the graph.
+
+### External Iceberg Table System Columns
+
+**DATA** - Column added for deployment but column is not added to iceberg table as columns specifications are not required for External Iceberg tables.The exact columns are refreshed in the mapping grid using **Re-Sync Columns** button in the top right corner in mapping grid.The other option to refresh columns is by using [API-NODEUPDATE](https://github.com/coalesceio/External-Data-Package/blob/main/README.md#API-NODEUPDATE) node type.
+
+### External Iceberg Table With Task Deployment Parameters
+
+* **targetTaskWarehouse**: Alows you to specify a different warehouse used to run a task in different environments. Default value: `DEV ENVIRONMENT`
+
+When set to `DEV ENVIRONMENT` the value entered in the **Task Scheduling Options > Run Task Warehouse** will be used when creating the task.
+
+```json
+{
+    "targetTaskWarehouse": "DEV ENVIRONMENT"
+}
+```
+
+When set to any value other than `DEV ENVIRONMENT` the node will attempt to create the task using a Snowflake warehouse with the specified value.
+
+For example, with the below setting for the parameter in a QA environment, the task will execute using a warehouse named `compute_wh`.
+
+```json
+{
+    "targetTaskWarehouse": "compute_wh"
+}
+```
+
+* **targetTaskExecuteAsUser**: Allows you to specify a different user to execute the task across environments. Default value: `DEV ENVIRONMENT`
+
+When set to `DEV ENVIRONMENT`, the value entered in **Task Scheduling Options > Execute As** is used when creating the task.
+
+```json
+{
+    "targetTaskExecuteAsUser": "DEV ENVIRONMENT"
+}
+```
+
+When set to any other value, the task is created to execute as the specified Snowflake user.
+
+```json
+{
+    "targetTaskExecuteAsUser": "xxxxxxx"
+}
+```
+
+* **targetTaskErrorIntegration**: Allows you to specify a different error notification integration across environments. Default value: `DEV ENVIRONMENT`
+
+When set to `DEV ENVIRONMENT`, the value entered in **Task Scheduling Options > Error Integration** is used when creating the task.
+
+```json
+{
+    "targetTaskErrorIntegration": "DEV ENVIRONMENT"
+}
+```
+
+When set to any other value, the task is created using the specified Snowflake notification integration for error handling.
+
+```json
+{
+    "targetTaskErrorIntegration": "my_error_integration"
+}
+```
+
+* **targetTaskSuccessIntegration**: Allows you to specify a different success notification integration across environments. Default value: `DEV ENVIRONMENT`
+
+When set to `DEV ENVIRONMENT`, the value entered in **Task Scheduling Options > Success Integration** is used when creating the task.
+
+```json
+{
+    "targetTaskSuccessIntegration": "DEV ENVIRONMENT"
+}
+```
+
+When set to any other value, the task is created using the specified Snowflake notification integration for success handling.
+
+```json
+{
+    "targetTaskSuccessIntegration": "my_success_integration"
+}
+```
+
+### External Iceberg RW Table Initial Deployment
 
 When deployed for the first time into an environment the External Iceberg Table node will execute three stages dependent on whether or not the task schedule relies on a predecessor task.
 
