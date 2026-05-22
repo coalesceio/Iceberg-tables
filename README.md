@@ -374,11 +374,23 @@ You can use this option to create an Iceberg table registered in the AWS Glue Da
 * An AWS IAM role with read and write permissions on the target AWS Glue Data Catalog and the underlying S3 location.
 * A Snowflake External Volume configured with `ALLOW_WRITES = TRUE`  pointing to the target S3 location.
 * Either catalog-vended credentials or a storage integration configured for Snowflake to access the underlying S3 data.
+* Use a Snowflake catalog-linked database to create and register the Iceberg table in AWS Glue during deployment.
+
+### Key Features
+ 
+- **Node-level table linking** — each node points to a specific Glue-managed Iceberg table
+- **Two modes supported:**
+
+    | Mode | Description |
+    |---|---|
+    | **Create** | Node creates a new Iceberg table and registers it in AWS Glue Data Catalog at deploy time ([requires catalog-linked database](https://docs.snowflake.com/en/sql-reference/sql/create-iceberg-table-rest)) |
+    | **Sync to Existing** | Node links to an already existing Glue Iceberg table and writes to it |
 
 ### External Iceberg RW Table Configuration
 
 * [External Iceberg RW Table Node Properties](#external-iceberg-rw-table-node-properties)
-* [External Iceberg RW Table Options](#external-iceberg-rw-table-options)
+* [External Iceberg RW Table Options](#external-iceberg-rw-table-create-options)
+* [External Iceberg RW Table Options](#external-iceberg-rw-table-load-options)
 * [External Iceberg RW Table Scheduling Options](#external-iceberg-rw-table-task-scheduling-options)
 * [External Iceberg RW Table System Columns](#external-iceberg-rw-table-system-columns)
 
@@ -396,12 +408,15 @@ You can use this option to create an Iceberg table registered in the AWS Glue Da
 |-------------|-----------------|
 | **Create As** | Create as - iceberg table |
 | **Type of Catalog** | Specify the type of catalog:<br/>- AWS Glue |
-| **External Volume** | Specifies the identifier (name) for the external volume where the Iceberg table stores its metadata files and data in Parquet format. [External volume](https://docs.snowflake.com/sql-reference/sql/create-external-volume) needs to be created in Snowflake as a prerequisite. |
-| **REST Catalog** | Specifies the identifier (name) of the [REST Catalog Integration - Glue](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration-rest-glue) for this table. |
-| **Catalog Namespace** | Optionally specifies the namespace (for example, `my_glue_database`) for the AWS Glue Data Catalog source. Option available if AWS Glue catalog is chosen. |
-| **Catalog Table Name** | Name of the catalog table. Option available if AWS Glue catalog is chosen. |
+| **Create Table with Schema** | Creates and registers the Iceberg table in a catalog-linked database (e.g. AWS Glue) |
+| **Partition By** | Toggle which enables Iceberg table partitioning columns or expressions. |
+| **Target File Size** | Specifies a target Parquet file size for the table. |
+| **Replace Invalid Characters** | Specifies whether to replace invalid UTF-8 characters with the Unicode replacement character (�) in query results. |
+| **External Volume** | *Available when **Create Table with Schema** is OFF.*<br/>Specifies the identifier (name) for the external volume where the Iceberg table stores its metadata files and data in Parquet format. [External volume](https://docs.snowflake.com/sql-reference/sql/create-external-volume) needs to be created in Snowflake as a prerequisite. |
+| **REST Catalog** | *Available when **Create Table with Schema** is OFF.*<br/>Specifies the identifier (name) of the [REST Catalog Integration - Glue](https://docs.snowflake.com/en/user-guide/tables-iceberg-configure-catalog-integration-rest-glue) for this table. |
+| **Catalog Namespace** | *Available when **Create Table with Schema** is OFF.*<br/>Optionally specifies the namespace (for example, `my_glue_database`) for the AWS Glue Data Catalog source. Option available if AWS Glue catalog is chosen. |
+| **Catalog Table Name** | *Available when **Create Table with Schema** is OFF.*<br/>Name of the catalog table. Option available if AWS Glue catalog is chosen. |
 | **Auto Refresh Metadata** | Table will use automated metadata refreshes if set to TRUE |
-| **Schedule Run** | True or False toggle that determines whether a task will be created or if the SQL to be used in the task will execute DML as a Run action. Prior to creating a task, it is helpful to test the SQL the task will execute to make sure it runs without errors and returns the expected data.<br/>- **False** - A table will be created and SQL will execute as a Run action.<br/>- **True** - After sufficiently testing the SQL as a Run action, setting Schedule refresh Mode to true will wrap the SQL statement in a task with options specified in Scheduling Options.<br/>When Run is executed, a message appears prompting the user to wait for the load to occur. |
 
 ### External Iceberg RW Table Load Options
 
@@ -412,6 +427,7 @@ You can use this option to create an Iceberg table registered in the AWS Glue Da
 | **Distinct** | Toggle: True/False<br/>**True**: Group by All is invisible. DISTINCT data is chosen for processing.<br/>**False**: Group by All is visible. |
 | **Group by All** | Toggle: True/False<br/>**True**: DISTINCT is invisible, data grouped by all columns<br/>**False**: DISTINCT is visible |
 | **Order By** | Toggle: True/False<br/>**True**: Sort column and sort order drop down are visible and are required to form order by clause. <br/>**False**: Sort options invisible |
+| **Schedule Run** | *Available when **Create Table with Schema** is OFF.*<br/>True or False toggle that determines whether a task will be created or if the SQL to be used in the task will execute DML as a Run action. Prior to creating a task, it is helpful to test the SQL the task will execute to make sure it runs without errors and returns the expected data.<br/>- **False** - A table will be created and SQL will execute as a Run action.<br/>- **True** - After sufficiently testing the SQL as a Run action, setting Schedule refresh Mode to true will wrap the SQL statement in a task with options specified in Scheduling Options.<br/>When Run is executed, a message appears prompting the user to wait for the load to occur. |
 
 ### External Iceberg RW Table Task Scheduling Options
 
@@ -455,13 +471,12 @@ If schedule refresh mode is set to true then Task Scheduling Options can be used
 | **Enable Error Notifications** | Toggle to send alerts on failure. Requires an **Error Integration Name**. |
 | **Enable Success Notifications** | Toggle to send alerts on success. Requires a **Success Integration Name**. |
 
-> **Note:** Options under **Advanced Scheduling Options** and **Notification Options** (Execution Time, Overlapping Execution, Auto-Suspend, Auto-Retry, etc.) are only applicable to **Root** and **Independent** tasks. The only exception is **Execute As Specific User**, which can be configured for any task in the graph.
+>**Notes:** <br/><br/>
+    1) Options under **Advanced Scheduling Options** and **Notification Options** (Execution Time, Overlapping Execution, Auto-Suspend, Auto-Retry, etc.) are only applicable to **Root** and **Independent** tasks. The only exception is **Execute As Specific User**, which can be configured for any task in the graph.<br/><br/>
+    2)  AWS stores column names in lowercase, whereas Snowflake preserves the original casing. Due to this mismatch, columns may not align correctly after **re-sync**, and sources might need to be re-added manually again.<br/><br/>
+    3) Task scheduling is currently possible only for Sync mode and not during CREATE mode using catalog-linked databases.
 
-### External Iceberg Table System Columns
-
-**DATA** - Column added for deployment but column is not added to iceberg table as columns specifications are not required for External Iceberg tables.The exact columns are refreshed in the mapping grid using **Re-Sync Columns** button in the top right corner in mapping grid.The other option to refresh columns is by using [API-NODEUPDATE](https://github.com/coalesceio/External-Data-Package/blob/main/README.md#API-NODEUPDATE) node type.
-
-### External Iceberg Table With Task Deployment Parameters
+### External Iceberg RW Table With Task Deployment Parameters
 
 * **targetTaskWarehouse**: Alows you to specify a different warehouse used to run a task in different environments. Default value: `DEV ENVIRONMENT`
 
@@ -1497,6 +1512,11 @@ Please review the documented limitations before performing a node type switch to
 
 * [Node definition](https://github.com/coalesceio/Iceberg-tables/blob/main/nodeTypes/ExternalIcebergtable-307/definition.yml)
 * [Create Template](https://github.com/coalesceio/Iceberg-tables/blob/main/nodeTypes/ExternalIcebergtable-307/create.sql.j2)
+
+### External Iceberg RW table
+
+* [Node definition]()
+* [Create Template]()
 
 ### Copy-Into Iceberg table
 
