@@ -8,7 +8,7 @@ metadata:
     capitalized: External Iceberg REST Table
     short: ICT
     plural: Iceberg tables
-    tagColor: '#8e134a'
+    tagColor: '#8e134a' 
 
     deployStrategy: advanced
     isColumnResyncEnabled: true
