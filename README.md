@@ -392,7 +392,6 @@ You can use this option to create an Iceberg table registered in the AWS Glue Da
 * [External Iceberg RW Table Options](#external-iceberg-rw-table-create-options)
 * [External Iceberg RW Table Options](#external-iceberg-rw-table-load-options)
 * [External Iceberg RW Table Scheduling Options](#external-iceberg-rw-table-task-scheduling-options)
-* [External Iceberg RW Table System Columns](#external-iceberg-rw-table-system-columns)
 
 ### External Iceberg RW Table Node Properties
 
