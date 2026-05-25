@@ -9,22 +9,34 @@ does not permit copying or modification for any other purpose.
 {# == Node Type Description    : Points to External Iceberg table and enables Insertion == #}
 
 {# == To run data quality tests before data insertion == #}
-{% for test in node.tests if config.testsEnabled %}
-    {% if test.runOrder == 'Before' %}
+{%- for test in node.tests if config.testsEnabled %}
+    {%- if test.runOrder == 'Before' %}
         {{ test_stage(test.name, test.continueOnFailure) }}
         {{ test.templateString }}
-    {% endif %}
-{% endfor %}
+    {%- endif %}
+{%- endfor %}
 
-{%- if config.schrefresh == false %}
-    {% if config.truncateBefore %}
+{%- if config.schrefresh == false or config.schemaTable %}
+    {%- if config.truncateBefore %}
+
+        {%- if config.schemaTable %}
+            {% set targetTableName =  ref_no_link(node.location.name, node.name) | replace ('"', '') %}
+        {%- else %}
+            {% set targetTableName =  ref_no_link(node.location.name, node.name) %}
+        {%- endif %}
+
         {{ stage('Truncate Iceberg Table') }}
-        TRUNCATE IF EXISTS {{ ref_no_link(node.location.name, node.name) }}
-    {% endif %}
+        TRUNCATE IF EXISTS {{ targetTableName }}
+    {%- endif %}
 
     {{ stage('Load Iceberg Table') }}
     {%- for source in sources %}
-        INSERT INTO {{ ref_no_link(node.location.name, node.name) }}
+        {%- if config.schemaTable %}
+            {% set targetTableName =  ref_no_link(node.location.name, node.name) | replace ('"', '') %}
+        {%- else %}
+            {% set targetTableName =  ref_no_link(node.location.name, node.name) %}
+        {%- endif %}
+        INSERT INTO {{ targetTableName }}
         (
             {%- for col in source.columns %}
                 "{{ col.name }}"
@@ -43,9 +55,9 @@ does not permit copying or modification for any other purpose.
             {%- if config.groupByAll %} GROUP BY ALL {%- endif %}
             {{ sortorder_by_colv() }}
         )
-        {% if config.insertStrategy in ['UNION', 'UNION ALL'] and not loop.last %}
+        {%- if config.insertStrategy in ['UNION', 'UNION ALL'] and not loop.last %}
             {{config.insertStrategy}}
-        {% endif %}
+        {%- endif %}
     {%- endfor %}
 {%- else %}
 
@@ -58,18 +70,18 @@ does not permit copying or modification for any other purpose.
 {%- endif %}
 
 {# == To run data quality tests after data insertion == #}
-{% if config.testsEnabled %}
-	{% for test in node.tests %}
-		{% if test.runOrder == 'After' %}
+{%- if config.testsEnabled %}
+	{%- for test in node.tests %}
+		{%- if test.runOrder == 'After' %}
 			{{ test_stage(test.name, test.continueOnFailure) }}
 			{{ test.templateString }}
-        {% endif %}
-	{% endfor %}
+        {%- endif %}
+	{%- endfor %}
 
-	{% for column in columns %}
-		{% for test in column.tests %}
+	{%- for column in columns %}
+		{%- for test in column.tests %}
 			{{ test_stage(column.name + ": " + test.name) }}
 			{{ test.templateString }}
-		{% endfor %}
-	{% endfor %}
-{% endif %}
+		{%- endfor %}
+	{%- endfor %}
+{%- endif %}

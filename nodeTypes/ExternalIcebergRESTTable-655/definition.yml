@@ -4,9 +4,9 @@ isDisabled: false
 metadata:
   defaultStorageLocation: null
   error: null
-  nodeMetadataSpec: |
+  nodeMetadataSpec: |-
     capitalized: External Iceberg REST Table
-    short: ICT
+    short: ict
     plural: Iceberg tables
     tagColor: '#8e134a' 
 
@@ -25,12 +25,6 @@ metadata:
         - iceberg table
         isRequired: false
 
-      # Warehouse name you want the task to run #
-      - type: label
-        attributeName: remindResync
-        displayName: "🚨Re-sync after creation to fetch the latest metadata from the external Iceberg table"
-        enableIf: ""
-
       - displayName: Type of Catalog
         attributeName: tcatalog
         type: dropdownSelector
@@ -38,42 +32,112 @@ metadata:
         options:
           - AWS Glue
         isRequired: true
+
+      - displayName: Create with Schema Mode (Using Catalog-Linked Database)
+        attributeName: schemaTable
+        type: toggleButton
+        isRequired: false
+        default: false
+        enableIf: "{% if config.syncTable %} false {% else %} true {% endif %}"
+
+      - displayName: Sync Mode (Using Native Snowflake Database)
+        attributeName: syncTable
+        type: toggleButton
+        isRequired: false
+        default: false
+        enableIf: "{% if config.schemaTable %} false {% else %} true {% endif %}"
+
+      - type: label
+        attributeName: remindResync
+        displayName: "🚨Re-sync after creation to fetch latest Iceberg metadata."
+        enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
+
+      - type: label
+        attributeName: warningCatalog
+        displayName: "ℹ️ Choose Catalog-Linked Database in Storage Location"
+        enableIf: "{% if config.schemaTable %} true {% else %} false {% endif %}"
+
+      - type: label
+        attributeName: warningLowerCase
+        displayName: "⚠️ Glue-linked Iceberg table names only support lowercase."
+        enableIf: "{% if node.name != node.name | lower and config.schemaTable %} true {% else %} false {% endif %}"
+
+      - type: toggleButton
+        attributeName: partitionByToggle
+        displayName: Partition By
+        default: false
+        enableIf: "{% if config.schemaTable %} true {% else %} false {% endif %}"
+
+      - type: tabular
+        displayName: ℹ️ Choose expression or column. Partitions apply in the same order
+        attributeName: partitionByConfig
+        columns:
       
+        -  type: textBox
+           displayName: Partition By Expression
+           attributeName: columnNameExpressions
+           isRequired: false
+
+        -  type: columnDropdownSelector
+           displayName: Partition By Column
+           attributeName: columnName
+           isRequired: false
+      
+        isRequired: false
+        enableIf: "{% if config.schemaTable and config.partitionByToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Target File Size
+        attributeName: targetFileSize
+        type: dropdownSelector
+        default: AUTO
+        options:
+          - AUTO
+          - 16MB
+          - 32MB
+          - 64MB
+          - 128MB
+        isRequired: false
+        enableIf: "{% if config.schemaTable %} true {% else %} false {% endif %}"
+
       - displayName: External Volume
         attributeName: extvolume
         type: textBox
         default: ""
+        enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
 
       - displayName: REST Catalog
         attributeName: catint
         type: textBox
+        enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
 
       - displayName: Catalog Table Name (ℹ️ Default. Node Name)
         attributeName: cattable
         type: textBox
         default: ""
-        enableIf: ""
+        enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
       
       - displayName: Catalog Namespace
         attributeName: catdb
         type: textBox
         default: ""
-        enableIf: ""
+        enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
+
+      - displayName: Replace Invalid Characters
+        attributeName: replaceInvalidChars
+        type: toggleButton
+        default: false
+        isRequired: false
+        enableIf: "{% if config.schemaTable or config.syncTable %} true {% else %} false {% endif %}"
           
       - displayName: Auto Refresh Metadata
         attributeName: autoRefresh
         type: toggleButton
         isRequired: false
         default: true
-
-      - displayName: Schedule Run
-        attributeName: schrefresh
-        type: toggleButton
-        isRequired: false
-        default: false
+        enableIf: "{% if config.schemaTable or config.syncTable %} true {% else %} false {% endif %}"
 
     - groupName: Iceberg Load Options
-      enableIf: ""
+      enableIf: "{% if config.schemaTable or config.syncTable %} true {% else %} false {% endif %}"
       items:
 
       - displayName: Enable Tests
@@ -84,7 +148,7 @@ metadata:
       - displayName: Truncate Before
         attributeName: truncateBefore
         type: toggleButton
-        default: true
+        default: false
         enableIf: ""
         
       - displayName: Distinct
@@ -125,10 +189,17 @@ metadata:
         isRequired: true
         enableIf: "{% if config.orderby %} true {% else %} false {% endif %}"
 
+      - displayName: Schedule Run
+        attributeName: schrefresh
+        type: toggleButton
+        isRequired: false
+        default: false
+        enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
+
     - groupName: Scheduled Run Options
 
       # Schedule mode-specifies whether a warehouse or serverless compute is used to run the task #
-      enableIf: "{% if config.schrefresh %} true {% else %} false {% endif %}"
+      enableIf: "{% if config.schrefresh and config.syncTable %} true {% else %} false {% endif %}"
       items:
 
       - displayName: Scheduling Mode
@@ -273,7 +344,7 @@ metadata:
         enableIf: "{% if config.schedulePeriodOption == 'Predecessor' %} true {% else %} false {% endif %}"
 
     - groupName: Advanced Scheduling Options
-      enableIf: "{% if config.schrefresh %} true {% else %} false {% endif %}"
+      enableIf: "{% if config.schrefresh and config.syncTable %} true {% else %} false {% endif %}"
       items:
 
       - displayName: Execute As Specific User
@@ -349,7 +420,7 @@ metadata:
         enableIf: "{% if config.schedulePeriodOption not in ['Predecessor'] and config.autoRetryToggle %} true {% else %} false {% endif %}"
 
     - groupName: Notification Options
-      enableIf: "{% if config.schrefresh == false or config.schedulePeriodOption in ['Predecessor'] %} false {% else %} true {% endif %}"
+      enableIf: "{% if config.schrefresh == false or config.schedulePeriodOption in ['Predecessor'] or not config.syncTable %} false {% else %} true {% endif %}"
       items:
 
       - displayName: Enable Error Notifications
@@ -387,12 +458,5 @@ metadata:
         default: ''
         isRequired: false
         enableIf: "{% if config.successNotifyToggle %} true {% else %} false {% endif %}"
-
-    systemColumns:
-    - displayName: 'DATA'
-      transform: 'This column is not part of target iceberg table'
-      dataType:  STRING
-      placement: beginning
-      attributeName: dummycolumn
 name: External Iceberg REST Table
 type: NodeType

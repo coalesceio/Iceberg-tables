@@ -53,17 +53,17 @@ macroString: |-
   -------------------------------------------------------------------#}
   {% macro icebergcoldatatype( coldatatype ) %}
 
-  	{% set nsVariables = namespace(ibcoldatatype = "") %}
+  	{%- set nsVariables = namespace(ibcoldatatype = "") %}
 
-  	{% if 'VARCHAR' in coldatatype %}
-  		{% set nsVariables.ibcoldatatype = 'STRING' %}
-  	{% elif 'TIMESTAMP' in coldatatype %}
-  		{% set nsVariables.ibcoldatatype = 'TIMESTAMP' %}
-  	{% elif 'TIME' in coldatatype %}
-  		{% set nsVariables.ibcoldatatype = 'TIME' %}
-  	{% else %}
-  		{% set nsVariables.ibcoldatatype = coldatatype %}
-  	{% endif %}
+  	{%- if 'VARCHAR' in coldatatype %}
+  		{%- set nsVariables.ibcoldatatype = 'STRING' %}
+  	{%- elif 'TIMESTAMP' in coldatatype %}
+  		{%- set nsVariables.ibcoldatatype = 'TIMESTAMP' %}
+  	{%- elif 'TIME' in coldatatype %}
+  		{%- set nsVariables.ibcoldatatype = 'TIME' %}
+  	{%- else %}
+  		{%- set nsVariables.ibcoldatatype = coldatatype %}
+  	{%- endif %}
   	
   	{{ nsVariables.ibcoldatatype }}
 
@@ -379,5 +379,27 @@ macroString: |-
           ORDER BY {{ ns.cols | join(', ') }}
       {%- endif -%}
   {%- endmacro -%}
+
+
+  {% macro get_partition_by() %}
+      {%- if config.partitionByToggle and config.partitionByConfig.get("items") %}
+          {%- set partitions = namespace(list=[]) %}
+          {%- for item in config.partitionByConfig.get("items") %}
+              {%- if item.columnNameExpressions and item.columnNameExpressions != "" %}
+                  {%- set partitions.list = partitions.list + [item.columnNameExpressions] %}
+              {%- elif item.columnName and item.columnName.name %}
+                  {%- set partitions.list = partitions.list + [item.columnName.name] %}
+              {%- endif %}
+          {%- endfor %}
+
+          {%- if partitions.list %}
+              PARTITION BY ({{ partitions.list | join(', ') }})
+          {%- else %}
+              {{ '' }}
+          {%- endif %}
+      {%- else %}
+          {{ '' }}
+      {%- endif %}
+  {% endmacro %}
 name: macro
 type: Macro

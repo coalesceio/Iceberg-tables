@@ -1,0 +1,6 @@
+excludeSelector: ""
+fileVersion: 1
+id: "95"
+includeSelector: "{ location: \"TARGET_DEV\" name: \"ict_NATION_TEST_Create\" } OR { location: \"TARGET_DB\" name: \"ict_NATION_TEST_Sync_Insert\" } OR { location: \"TARGET_DB\" name: \"ict_NATION_TEST_Sync_Schedule\" } OR { location: \"SOURCE_DATA\" name: \"NATION_TEST\" }"
+name: Test_Job
+type: Job
