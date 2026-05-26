@@ -102,7 +102,7 @@ metadata:
       - type: label
         attributeName: warningVolumeParameter
         displayName: "⚠️ Warning! targetExternalVolume parameter is not provided"
-        enableIf: "{%- if config.syncTable and (parameters == {} or parameters.targetExternalVolume == '' ) %} true {%- else %} false {%- endif %}"
+        enableIf: "{%- if config.syncTable and config.extvolume | trim | length == 0 and (parameters == {} or parameters.targetExternalVolume == '' ) %} true {%- else %} false {%- endif %}"
 
       - displayName: External Volume
         attributeName: extvolume
@@ -113,7 +113,7 @@ metadata:
       - type: label
         attributeName: warningSyncCatalog
         displayName: "⚠️ Warning! targetRESTCatalogIntegration parameter is not provided"
-        enableIf: "{%- if config.syncTable and (parameters == {} or parameters.targetRESTCatalogIntegration == '' ) %} true {%- else %} false {%- endif %}"
+        enableIf: "{%- if config.syncTable and config.catint | trim | length == 0 and (parameters == {} or parameters.targetRESTCatalogIntegration == '' ) %} true {%- else %} false {%- endif %}"
 
       - displayName: REST Catalog
         attributeName: catint
@@ -121,23 +121,23 @@ metadata:
         enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
 
       - type: label
-        attributeName: warningSyncTable
-        displayName: "⚠️ Warning! targetCatalogTableName parameter is not provided"
-        enableIf: "{%- if config.syncTable and (parameters == {} or parameters.targetCatalogTableName == '' ) %} true {%- else %} false {%- endif %}"
-
-      - displayName: Catalog Table Name (ℹ️ Default. Node Name)
-        attributeName: cattable
+        attributeName: warningNamespace
+        displayName: "⚠️ Warning! targetCatalogNamespace parameter is not provided"
+        enableIf: "{%- if config.syncTable and config.catdb | trim | length == 0 and (parameters == {} or parameters.targetCatalogNamespace == '' ) %} true {%- else %} false {%- endif %}"
+      
+      - displayName: Catalog Namespace
+        attributeName: catdb
         type: textBox
         default: ""
         enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
 
       - type: label
-        attributeName: warningNamespace
-        displayName: "⚠️ Warning! targetCatalogNamespace parameter is not provided"
-        enableIf: "{%- if config.syncTable and (parameters == {} or parameters.targetCatalogNamespace == '' ) %} true {%- else %} false {%- endif %}"
-      
-      - displayName: Catalog Namespace
-        attributeName: catdb
+        attributeName: warningSyncTable
+        displayName: "⚠️ Warning! targetCatalogTableName parameter is not provided"
+        enableIf: "{%- if config.syncTable and config.cattable | trim | length == 0 and (parameters == {} or parameters.targetCatalogTableName == '' ) %} true {%- else %} false {%- endif %}"
+
+      - displayName: Catalog Table Name (ℹ️ Default. Node Name)
+        attributeName: cattable
         type: textBox
         default: ""
         enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
