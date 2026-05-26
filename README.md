@@ -1467,8 +1467,9 @@ Please review the documented limitations before performing a node type switch to
 
 ### External Iceberg REST Table
 
-* [Node definition]()
-* [Create Template]()
+* [Node definition](https://github.com/coalesceio/Iceberg-tables/blob/main/nodeTypes/ExternalIcebergRESTTable-655/definition.yml)
+* [Create Template](https://github.com/coalesceio/Iceberg-tables/blob/main/nodeTypes/ExternalIcebergRESTTable-655/create.sql.j2)
+* [Run Template](https://github.com/coalesceio/Iceberg-tables/blob/main/nodeTypes/ExternalIcebergRESTTable-655/run.sql.j2)
 
 ### Copy-Into Iceberg table
 
