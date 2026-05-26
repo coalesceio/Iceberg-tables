@@ -79,7 +79,7 @@ does not permit copying or modification for any other purpose.
  
 {%- elif currentState != undefined and desiredState == undefined %}
 
-    {%- if desiredState.config.schemaTable %}
+    {%- if currentState.config.schemaTable %}
         {%- set fullyQualifiedTargetObjectName = ref_no_link(currentState.node.location.name, currentState.node.name) | replace ('"', '') %}
     {%- else %}
         {%- set fullyQualifiedTargetObjectName = ref_no_link(currentState.node.location.name, currentState.node.name) %}
