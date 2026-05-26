@@ -466,6 +466,13 @@ All parameters default to `DEV ENVIRONMENT`, which uses the value set in **Confi
 | `targetTaskSuccessIntegration` | SNS integration for success notifications |
 | `targetExternalVolume` | External volume used for the Iceberg table |
 | `targetRESTCatalogIntegration` | REST Catalog integration used for the Iceberg table |
+| `targetCatalogTableName` | The actual table name registered in AWS Glue catalog |
+| `targetCatalogNamespace` | The Glue database/namespace where the Iceberg table lives |
+
+---
+
+**Example — DEV ENVIRONMENT**
+```json
 
 ---
 
@@ -477,7 +484,9 @@ All parameters default to `DEV ENVIRONMENT`, which uses the value set in **Confi
   "targetTaskErrorIntegration": "DEV ENVIRONMENT",
   "targetTaskSuccessIntegration": "DEV ENVIRONMENT",
   "targetExternalVolume": "DEV ENVIRONMENT",
-  "targetRESTCatalogIntegration": "DEV ENVIRONMENT"
+  "targetRESTCatalogIntegration": "DEV ENVIRONMENT",
+  "targetCatalogTableName": "DEV ENVIRONMENT",
+  "targetCatalogNamespace": "DEV ENVIRONMENT"
 }
 ```
 
@@ -489,7 +498,9 @@ All parameters default to `DEV ENVIRONMENT`, which uses the value set in **Confi
   "targetTaskErrorIntegration": "my_error_integration",
   "targetTaskSuccessIntegration": "my_success_integration",
   "targetExternalVolume": "my_external_volume",
-  "targetRESTCatalogIntegration": "my_rest_catalog_integration"
+  "targetRESTCatalogIntegration": "my_rest_catalog_integration",
+  "targetCatalogTableName": "my_catalog_table_name",
+  "targetCatalogNamespace": "my_catalog_namespace"
 }
 ```
 
