@@ -1,0 +1,87 @@
+{#
+    Copyright (c) 2026 Coalesce. All rights reserved.
+This script and its associated documentation are confidential and proprietary to Coalesce.
+Unauthorized reproduction, distribution, or disclosure of this material is strictly prohibited.
+Coalesce permits you to copy and modify this script for the purposes of using with Coalesce but
+does not permit copying or modification for any other purpose.  
+#} 
+{# == Node Type Name           : External Iceberg REST table == #}
+{# == Node Type Description    : Points to External Iceberg table and enables Insertion == #}
+
+{# == To run data quality tests before data insertion == #}
+{%- for test in node.tests if config.testsEnabled %}
+    {%- if test.runOrder == 'Before' %}
+        {{ test_stage(test.name, test.continueOnFailure) }}
+        {{ test.templateString }}
+    {%- endif %}
+{%- endfor %}
+
+{%- if (config.syncTable and config.schrefresh == false) or config.schemaTable %}
+    {%- if config.truncateBefore %}
+
+        {%- if config.schemaTable %}
+            {% set targetTableName =  ref_no_link(node.location.name, node.name) | replace ('"', '') %}
+        {%- else %}
+            {% set targetTableName =  ref_no_link(node.location.name, node.name) %}
+        {%- endif %}
+
+        {{ stage('Truncate Iceberg Table') }}
+        TRUNCATE IF EXISTS {{ targetTableName }}
+    {%- endif %}
+
+    {{ stage('Load Iceberg Table') }}
+    {%- for source in sources %}
+        {%- if config.schemaTable %}
+            {% set targetTableName =  ref_no_link(node.location.name, node.name) | replace ('"', '') %}
+        {%- else %}
+            {% set targetTableName =  ref_no_link(node.location.name, node.name) %}
+        {%- endif %}
+        INSERT INTO {{ targetTableName }}
+        (
+            {%- for col in source.columns %}
+                "{{ col.name }}"
+                {%- if not loop.last -%},{%- endif %}
+            {%- endfor %}
+        )
+        (
+            SELECT
+            {%- if config.selectDistinct %} DISTINCT {%- endif %}
+            {%- for col in source.columns %}
+                {{ get_source_transform(col) }} AS "{{ col.name }}"
+                {%- if not loop.last -%}, {%- endif %}
+            {%- endfor %}
+
+            {{ source.join }}
+            {%- if config.groupByAll %} GROUP BY ALL {%- endif %}
+            {{ sortorder_by_colv() }}
+        )
+        {%- if config.insertStrategy in ['UNION', 'UNION ALL'] and not loop.last %}
+            {{ config.insertStrategy }}
+        {%- endif %}
+    {%- endfor %}
+{%- else %}
+
+    {{ stage('Task Mode - No Manual Load') }}
+    -- This node is configured to run as a Scheduled Task Load
+    -- Manual Run is only available when Schedule Refresh is disabled
+    -- To see latest result, wait for the scheduled load to occur.
+    SELECT 1 AS INFO_MESSAGE WHERE FALSE
+    
+{%- endif %}
+
+{# == To run data quality tests after data insertion == #}
+{%- if config.testsEnabled %}
+	{%- for test in node.tests %}
+		{%- if test.runOrder == 'After' %}
+			{{ test_stage(test.name, test.continueOnFailure) }}
+			{{ test.templateString }}
+        {%- endif %}
+	{%- endfor %}
+
+	{%- for column in columns %}
+		{%- for test in column.tests %}
+			{{ test_stage(column.name + ": " + test.name) }}
+			{{ test.templateString }}
+		{%- endfor %}
+	{%- endfor %}
+{%- endif %}

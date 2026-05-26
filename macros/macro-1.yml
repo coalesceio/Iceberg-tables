@@ -8,7 +8,7 @@ macroString: |-
   {% macro buildcoldict(ns) %}
 
       {% if sources is defined %}
-          {% for source_idx in range(sources | length) %}
+          {% for source_idx in range((sources or []) | length) %}
               {% set source = sources[source_idx] %}
 
               {# Initialize the source entry if missing #}
@@ -40,7 +40,12 @@ macroString: |-
       {% set ns = namespace(column_dict = {}) %}
       {# Populate column dictionary #}
       {{ buildcoldict(ns) }}
+  {% else %}
 
+      {# For validate select - no failure #}
+      {% set ns = namespace(column_dict = {}) %}
+      {# Populate column dictionary #}
+      {{ buildcoldict(ns) }}
   {% endif %}
 
   {#-----------------------------------------------------------------
@@ -53,17 +58,17 @@ macroString: |-
   -------------------------------------------------------------------#}
   {% macro icebergcoldatatype( coldatatype ) %}
 
-  	{% set nsVariables = namespace(ibcoldatatype = "") %}
+  	{%- set nsVariables = namespace(ibcoldatatype = "") %}
 
-  	{% if 'VARCHAR' in coldatatype %}
-  		{% set nsVariables.ibcoldatatype = 'STRING' %}
-  	{% elif 'TIMESTAMP' in coldatatype %}
-  		{% set nsVariables.ibcoldatatype = 'TIMESTAMP' %}
-  	{% elif 'TIME' in coldatatype %}
-  		{% set nsVariables.ibcoldatatype = 'TIME' %}
-  	{% else %}
-  		{% set nsVariables.ibcoldatatype = coldatatype %}
-  	{% endif %}
+  	{%- if 'VARCHAR' in coldatatype %}
+  		{%- set nsVariables.ibcoldatatype = 'STRING' %}
+  	{%- elif 'TIMESTAMP' in coldatatype %}
+  		{%- set nsVariables.ibcoldatatype = 'TIMESTAMP' %}
+  	{%- elif 'TIME' in coldatatype %}
+  		{%- set nsVariables.ibcoldatatype = 'TIME' %}
+  	{%- else %}
+  		{%- set nsVariables.ibcoldatatype = coldatatype %}
+  	{%- endif %}
   	
   	{{ nsVariables.ibcoldatatype }}
 
@@ -332,5 +337,96 @@ macroString: |-
       {%- endif %}
 
   {%- endmacro %}
+
+  {####################################################################################################################################
+  Input:
+      None — reads directly from config.orderby and config.orderbycolumn
+
+  Output:
+      Returns a full ORDER BY clause e.g. ORDER BY "COL1" ASC, "COL2" DESC
+      Returns nothing if config.orderby is false or no columns defined.
+
+  Description:
+      Builds an ORDER BY clause from the sort columns and sort orders defined in node config.
+      Iterates over config.orderbycolumn items and concatenates column names with sort order.
+      Returns empty string if orderby toggle is off.
+
+  Example:
+      sortorder_by_colv()
+      → ORDER BY "EMP_ID" ASC, "CREATED_AT" DESC
+  ####################################################################################################################################}
+  {%- macro sortorder_by_colv() %}
+      {%- if config.orderby %}
+          {%- set ns = namespace(cols=[]) %}
+          {%- for i in config.orderbycolumn.get('items') %}
+              {%- set ns.cols = ns.cols + ['"' + i.sortColName.name + '" ' + i.sortOrder] %}
+          {%- endfor %}
+          ORDER BY {{ ns.cols | join(', ') }}
+      {%- endif %}
+  {%- endmacro %}
+
+  {####################################################################################################################################
+    Macro : get_partition_by
+
+    Description:
+      Generates the PARTITION BY clause for an Iceberg table based on
+      the nodes partition configuration. Supports both column-level
+      partitions and transform expressions (e.g., TRUNCATE, BUCKET).
+
+    Inputs (from node config):
+      - config.partitionByToggle      : boolean — enables/disables partitioning
+      - config.partitionByConfig.items: list of partition entries, each containing:
+          - columnNameExpressions     : transform expression (e.g., TRUNCATE(10, n_name), BUCKET(6, n_nationkey))
+          - columnName.name           : plain column name used when no expression is defined (e.g., n_regionkey)
+
+    Output:
+      - If toggle is ON and valid partitions exist:
+          PARTITION BY (TRUNCATE(10, n_name), n_regionkey, BUCKET(6, n_nationkey))
+      - If toggle is OFF or no valid partitions found:
+          '' (empty string)
+  ####################################################################################################################################}
+  {% macro get_partition_by() %}
+      {%- if config.partitionByToggle and config.partitionByConfig.get("items") %}
+          {%- set partitions = namespace(list=[]) %}
+          {%- for item in config.partitionByConfig.get("items") %}
+              {%- if item.columnNameExpressions and item.columnNameExpressions != "" %}
+                  {%- set partitions.list = partitions.list + [item.columnNameExpressions] %}
+              {%- elif item.columnName and item.columnName.name %}
+                  {%- set partitions.list = partitions.list + [item.columnName.name] %}
+              {%- endif %}
+          {%- endfor %}
+
+          {%- if partitions.list %}
+              PARTITION BY ({{ partitions.list | join(', ') }})
+          {%- else %}
+              {{ '' }}
+          {%- endif %}
+      {%- else %}
+          {{ '' }}
+      {%- endif %}
+  {% endmacro %}
+
+  {####################################################################################################################################
+    Description:
+      Resolves a deployment parameter value based on the environment.
+      If the parameter is set to 'DEV ENVIRONMENT', falls back to the
+      node config value. Otherwise uses the parameter value directly.
+
+    Inputs:
+      - paramValue   : The deployment parameter value (e.g., parameters.targetTaskErrorIntegration)
+      - configValue  : The fallback config value used in DEV ENVIRONMENT (e.g., config.errIntName)
+      - sqlPrefix    : The SQL prefix to prepend to the resolved value (e.g., 'ERROR_INTEGRATION = ')
+
+    Output:
+      Returns a SQL fragment with the resolved value.
+      e.g., ERROR_INTEGRATION = my_sns_integration
+  ####################################################################################################################################}
+  {%- macro resolve_env_parameter(paramValue, configValue) -%}
+      {%- if parameters == {} or paramValue == '' or paramValue | default('') == 'DEV ENVIRONMENT' -%}
+          {{ configValue | trim }}
+      {%- else -%}
+          {{ paramValue | default('') }}
+      {%- endif -%}
+  {%- endmacro -%}
 name: macro
 type: Macro

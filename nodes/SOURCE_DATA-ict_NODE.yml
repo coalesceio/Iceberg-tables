@@ -1,0 +1,195 @@
+fileVersion: 1
+id: 802cb96e-4252-40f3-b54a-1ea73d3098fb
+name: ict_NODE
+operation:
+  config:
+    autoRefresh: true
+    autoRetryToggle: false
+    autoSuspendToggle: false
+    catdb: ""
+    catint: ""
+    cattable: ""
+    configJSON: ""
+    errIntName: ""
+    errNotifyToggle: false
+    execTime:
+      items:
+        - {}
+    extvolume: ""
+    groupByAll: false
+    maxServerlessSize: 6. XXLARGE
+    minServerlessSize: 1. XSMALL
+    numFailures: "10"
+    orderby: false
+    orderbycolumn:
+      items:
+        - {}
+    overlapExecToggle: false
+    partitionByConfig:
+      items:
+        - {}
+    partitionByToggle: false
+    predTask: DATA_TRANSFORMATION_ROOT_TASK
+    replaceInvalidChars: false
+    retryAttmpt: "0"
+    rootTask: DATA_TRANSFORMATION_ROOT_TASK
+    scheduleCRON: 5 0-23 * * * America/Los_Angeles
+    schedulePeriodOption: Minutes
+    schedulingMode: Warehouse Task
+    schemaTable: false
+    schrefresh: false
+    selectDistinct: false
+    serverlessSize: 3. MEDIUM
+    sizeBoundToggle: false
+    spfcUserToggle: false
+    succIntName: ""
+    successNotifyToggle: false
+    syncTable: true
+    targetFileSize: AUTO
+    taskGraphToggle: false
+    tcatalog: AWS Glue
+    testsEnabled: false
+    truncateBefore: false
+    userName: ""
+    whName: ""
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: SOURCE_DATA
+  materializationType: iceberg table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 2bc1a04e-36a8-4c1c-a7ff-a2aac32ef29c
+          stepCounter: 802cb96e-4252-40f3-b54a-1ea73d3098fb
+        config: {}
+        dataType: NUMBER(38,0)
+        defaultValue: ""
+        description: ""
+        name: N_NATIONKEY
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: b82c9c64-f33e-44b1-bbf2-eab18c5d6df2
+          stepCounter: 802cb96e-4252-40f3-b54a-1ea73d3098fb
+        config: {}
+        dataType: VARCHAR(134217728)
+        defaultValue: ""
+        description: ""
+        name: N_NAME
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 5e93e826-2431-42b6-a586-66a1594d6efc
+          stepCounter: 802cb96e-4252-40f3-b54a-1ea73d3098fb
+        config: {}
+        dataType: NUMBER(38,0)
+        defaultValue: ""
+        description: ""
+        name: N_REGIONKEY
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: c55a9dc5-9e10-4f1c-9f96-048cbe51913e
+          stepCounter: 802cb96e-4252-40f3-b54a-1ea73d3098fb
+        config: {}
+        dataType: VARCHAR(134217728)
+        defaultValue: ""
+        description: ""
+        name: N_COMMENT
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: 9dd13e7f-4c0f-4a10-905b-236f9abd564b
+          stepCounter: 802cb96e-4252-40f3-b54a-1ea73d3098fb
+        config: {}
+        dataType: TIMESTAMP_NTZ(6)
+        defaultValue: ""
+        description: ""
+        name: N_LOAD_TIMESTAMP
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+      - acceptedValues:
+          strictMatch: true
+          values: []
+        appliedColumnTests: {}
+        columnReference:
+          columnCounter: b9b879fd-5285-49db-b4ca-7e8d218b639c
+          stepCounter: 802cb96e-4252-40f3-b54a-1ea73d3098fb
+        config: {}
+        dataType: VARCHAR(134217728)
+        defaultValue: ""
+        description: ""
+        name: N_CAPS
+        nullable: true
+        primaryKey: false
+        sourceColumnReferences:
+          - columnReferences: []
+            transform: ""
+        transform: ""
+        uniqueKey: false
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases: {}
+        customSQL:
+          customSQL: ""
+        dependencies: []
+        join:
+          joinCondition: ""
+        name: ict_NODE
+        noLinkRefs: []
+  name: ict_NODE
+  overrideSQL: false
+  schema: ""
+  sqlType: "655"
+  type: sql
+  version: 1
+type: Node

@@ -1,0 +1,482 @@
+fileVersion: 1
+id: "655"
+isDisabled: false
+metadata:
+  defaultStorageLocation: null
+  error: null
+  nodeMetadataSpec: |-
+    capitalized: External Iceberg REST Table
+    short: ict
+    plural: Iceberg tables
+    tagColor: '#8e134a' 
+
+    deployStrategy: advanced
+    isColumnResyncEnabled: true
+
+    config:
+
+    - groupName: Iceberg Create Options
+      items:
+
+      - displayName: table type
+        type: materializationSelector
+        default: iceberg table
+        options:
+        - iceberg table
+        isRequired: false
+
+      - displayName: Type of Catalog
+        attributeName: tcatalog
+        type: dropdownSelector
+        default: AWS Glue
+        options:
+          - AWS Glue
+        isRequired: true
+
+      - displayName: Create with Schema Mode (Using Catalog-Linked Database)
+        attributeName: schemaTable
+        type: toggleButton
+        isRequired: false
+        default: false
+        enableIf: "{% if config.syncTable %} false {% else %} true {% endif %}"
+
+      - displayName: Sync Mode (Using Native Snowflake Database)
+        attributeName: syncTable
+        type: toggleButton
+        isRequired: false
+        default: false
+        enableIf: "{% if config.schemaTable %} false {% else %} true {% endif %}"
+
+      - type: label
+        attributeName: remindResync
+        displayName: "🚨Re-sync after creation to fetch latest Iceberg metadata."
+        enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
+
+      - type: label
+        attributeName: warningCatalog
+        displayName: "ℹ️ Choose Catalog-Linked Database in Storage Location"
+        enableIf: "{% if config.schemaTable %} true {% else %} false {% endif %}"
+
+      - type: label
+        attributeName: warningLowerCase
+        displayName: "⚠️ Glue-linked Iceberg table names only support lowercase."
+        enableIf: "{% if node.name != node.name | lower and config.schemaTable %} true {% else %} false {% endif %}"
+
+      - type: toggleButton
+        attributeName: partitionByToggle
+        displayName: Partition By
+        default: false
+        enableIf: "{% if config.schemaTable %} true {% else %} false {% endif %}"
+
+      - type: tabular
+        displayName: ℹ️ Choose expression or column. Partitions apply in the same order
+        attributeName: partitionByConfig
+        columns:
+      
+        -  type: textBox
+           displayName: Partition By Expression
+           attributeName: columnNameExpressions
+           isRequired: false
+
+        -  type: columnDropdownSelector
+           displayName: Partition By Column
+           attributeName: columnName
+           isRequired: false
+      
+        isRequired: false
+        enableIf: "{% if config.schemaTable and config.partitionByToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Target File Size
+        attributeName: targetFileSize
+        type: dropdownSelector
+        default: AUTO
+        options:
+          - AUTO
+          - 16MB
+          - 32MB
+          - 64MB
+          - 128MB
+        isRequired: false
+        enableIf: "{% if config.schemaTable %} true {% else %} false {% endif %}"
+
+      - type: label
+        attributeName: warningVolumeParameter
+        displayName: "⚠️ Warning! External Volume cannot be empty. Please provide targetExternalVolume parameter or config value"
+        enableIf: "{%- if config.syncTable and config.extvolume | trim | length == 0 and (parameters == {} or parameters.targetExternalVolume == '' or parameters.targetExternalVolume == 'DEV ENVIRONMENT') %} true {%- else %} false {%- endif %}"
+
+      - displayName: External Volume
+        attributeName: extvolume
+        type: textBox
+        default: ""
+        enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
+
+      - type: label
+        attributeName: warningSyncCatalog
+        displayName: "⚠️ Warning! REST Catalog cannot be empty. Please provide targetRESTCatalogIntegration parameter or config value"
+        enableIf: "{%- if config.syncTable and config.catint | trim | length == 0 and (parameters == {} or parameters.targetRESTCatalogIntegration == '' or parameters.targetRESTCatalogIntegration == 'DEV ENVIRONMENT') %} true {%- else %} false {%- endif %}"
+
+      - displayName: REST Catalog
+        attributeName: catint
+        type: textBox
+        enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
+
+      - type: label
+        attributeName: warningNamespace
+        displayName: "⚠️ Warning! Catalog Namespace cannot be empty. Please provide targetCatalogNamespace parameter or config value"
+        enableIf: "{%- if config.syncTable and config.catdb | trim | length == 0 and (parameters == {} or parameters.targetCatalogNamespace == '' or parameters.targetCatalogNamespace == 'DEV ENVIRONMENT') %} true {%- else %} false {%- endif %}"
+      
+      - displayName: Catalog Namespace
+        attributeName: catdb
+        type: textBox
+        default: ""
+        enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
+
+      - type: label
+        attributeName: warningSyncTable
+        displayName: "⚠️ Warning! Catalog Table Name cannot be empty. Please provide targetCatalogTableName parameter or config value"
+        enableIf: "{%- if config.syncTable and config.cattable | trim | length == 0 and (parameters == {} or parameters.targetCatalogTableName == '' or parameters.targetCatalogTableName == 'DEV ENVIRONMENT') %} true {%- else %} false {%- endif %}"
+
+      - displayName: Catalog Table Name (ℹ️ Default. Node Name)
+        attributeName: cattable
+        type: textBox
+        default: ""
+        enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
+
+      - displayName: Replace Invalid Characters
+        attributeName: replaceInvalidChars
+        type: toggleButton
+        default: false
+        isRequired: false
+        enableIf: "{% if config.schemaTable or config.syncTable %} true {% else %} false {% endif %}"
+          
+      - displayName: Auto Refresh Metadata
+        attributeName: autoRefresh
+        type: toggleButton
+        isRequired: false
+        default: true
+        enableIf: "{% if config.schemaTable or config.syncTable %} true {% else %} false {% endif %}"
+
+    - groupName: Iceberg Load Options
+      enableIf: "{% if config.schemaTable or config.syncTable %} true {% else %} false {% endif %}"
+      items:
+
+      - displayName: Enable Tests
+        attributeName: testsEnabled
+        type: toggleButton
+        default: false
+
+      - displayName: Truncate Before
+        attributeName: truncateBefore
+        type: toggleButton
+        default: false
+        enableIf: ""
+        
+      - displayName: Distinct
+        attributeName: selectDistinct
+        type: toggleButton
+        enableIf: "{% if config.groupByAll %} false {% else %} true {% endif %}"
+        default: false
+
+      - displayName: Group By All
+        attributeName: groupByAll
+        type: toggleButton
+        default: false
+        enableIf: "{% if config.selectDistinct %} false {% else %} true {% endif %}"
+
+      - displayName: Order By
+        attributeName: orderby
+        type: toggleButton
+        default: false
+        enableIf: ""
+
+      - type: tabular
+        displayName: ''
+        attributeName: orderbycolumn
+        columns:
+
+          -  type: columnDropdownSelector
+             displayName: Column Name
+             attributeName: sortColName
+
+          -  type: dropdownSelector
+             displayName: Sort Order
+             attributeName: sortOrder
+             default: desc
+             options:
+             - desc
+             - asc
+           
+        isRequired: true
+        enableIf: "{% if config.orderby %} true {% else %} false {% endif %}"
+
+      - displayName: Schedule Run
+        attributeName: schrefresh
+        type: toggleButton
+        isRequired: false
+        default: false
+        enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
+
+    - groupName: Scheduled Run Options
+
+      # Schedule mode-specifies whether a warehouse or serverless compute is used to run the task #
+      enableIf: "{% if config.schrefresh and config.syncTable %} true {% else %} false {% endif %}"
+      items:
+
+      - displayName: Scheduling Mode
+        attributeName: schedulingMode
+        type: dropdownSelector
+        default: Warehouse Task
+        options:
+          - Warehouse Task
+          - Serverless Task
+        isRequired: true
+
+      # Warehouse name you want the task to run #
+      - type: label
+        attributeName: warningtaskParameter
+        displayName: "⚠️ Warning! targetTaskWarehouse parameter is not provided"
+        enableIf: "{%- if (parameters == {} or parameters.targetTaskWarehouse == '' ) and config.schedulingMode == 'Warehouse Task' %} true {%- else %} false {%- endif %}"
+
+      - displayName: Run Task Warehouse
+        attributeName: whName
+        type: textBox
+        default: ''
+        isRequired: false
+        enableIf: "{% if config.schedulingMode == 'Warehouse Task' %} true {% else %} false {% endif %}"
+
+      - displayName: Initial Serverless Warehouse Size
+        attributeName: serverlessSize
+        type: dropdownSelector
+        default: '3. MEDIUM'
+        options:
+          - 1. XSMALL
+          - 2. SMALL
+          - 3. MEDIUM
+          - 4. LARGE
+          - 5. XLARGE
+          - 6. XXLARGE
+        isRequired: false
+        enableIf: "{% if config.schedulingMode == 'Serverless Task' %} true {% else %} false {% endif %}"
+
+      - displayName: Enable Size Bounds
+        attributeName: sizeBoundToggle
+        type: toggleButton
+        default: false
+        isRequired: false
+        enableIf: "{% if config.schedulingMode == 'Serverless Task' %} true {% else %} false {% endif %}"
+
+      - type: label
+        attributeName: boundErr
+        displayName: "⚠️ Min size ≤ Initial size ≤ Max size"
+        enableIf: "{% if config.schedulingMode == 'Serverless Task'
+                      and config.sizeBoundToggle
+                      and 
+                      (
+                        config.minServerlessSize.split('.')[0] | int > config.serverlessSize.split('.')[0] | int
+                        or config.maxServerlessSize.split('.')[0] | int < config.serverlessSize.split('.')[0] | int
+                        or config.maxServerlessSize.split('.')[0] | int < config.minServerlessSize.split('.')[0] | int
+                      )
+                    %} true {% else %} false {% endif %}"
+
+      - displayName: Minimum Warehouse Size
+        attributeName: minServerlessSize
+        type: dropdownSelector
+        default: '1. XSMALL'
+        options:
+          - 1. XSMALL
+          - 2. SMALL
+          - 3. MEDIUM
+          - 4. LARGE
+          - 5. XLARGE
+          - 6. XXLARGE
+        isRequired: false
+        enableIf: "{% if config.schedulingMode == 'Serverless Task' and config.sizeBoundToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Maximum Warehouse Size
+        attributeName: maxServerlessSize
+        type: dropdownSelector
+        default: '6. XXLARGE'
+        options:
+          - 1. XSMALL
+          - 2. SMALL
+          - 3. MEDIUM
+          - 4. LARGE
+          - 5. XLARGE
+          - 6. XXLARGE
+        isRequired: false
+        enableIf: "{% if config.schedulingMode == 'Serverless Task' and config.sizeBoundToggle %} true {% else %} false {% endif %}"
+
+      # Way to schedule the task to run #
+      - displayName: Task Schedule
+        attributeName: schedulePeriodOption
+        type: dropdownSelector
+        default: Minutes
+        options:
+          - Minutes
+          - CRON
+          - Predecessor
+        isRequired: true
+
+      - type: tabular
+        displayName: Execution Time [💡Seconds(10 - 691200), Minutes(1 - 11520), Hours(1 - 192)]
+        attributeName: execTime
+
+        columns:
+
+        -  type: textBox
+           displayName: ''
+           attributeName: value
+           default: 60
+           isRequired: false
+
+        -  type: dropdownSelector
+           displayName: ''
+           attributeName: period
+           default: "Minutes"
+           options:
+            - Seconds
+            - Minutes
+            - Hours
+           isRequired: false
+
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption == 'Minutes' %} true {% else %} false {% endif %}"
+
+      - displayName: Enter task schedule using CRON
+        attributeName: scheduleCRON
+        type: textBox
+        default: '5 0-23 * * * America/Los_Angeles'
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption == 'CRON' %} true {% else %} false {% endif %}"
+
+      - displayName: Enter predecessor task(s) separated by a comma
+        attributeName: predTask
+        type: textBox
+        default: 'DATA_TRANSFORMATION_ROOT_TASK'
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption == 'Predecessor' %} true {% else %} false {% endif %}"
+
+      - displayName: Enter root task name
+        attributeName: rootTask
+        type: textBox
+        default: 'DATA_TRANSFORMATION_ROOT_TASK'
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption == 'Predecessor' %} true {% else %} false {% endif %}"
+
+    - groupName: Advanced Scheduling Options
+      enableIf: "{% if config.schrefresh and config.syncTable %} true {% else %} false {% endif %}"
+      items:
+
+      - displayName: Execute As Specific User
+        attributeName: spfcUserToggle
+        type: toggleButton
+        default: false
+        isRequired: false
+
+      - type: label
+        attributeName: userInfo
+        displayName: "ℹ️ Runs the task on behalf of a specified user account. Requires GRANT IMPERSONATE ON USER privilege."
+        enableIf: "{% if config.spfcUserToggle %} true {% else %} false {% endif %}"
+
+      - type: label
+        attributeName: warningSpfcUser
+        displayName: "⚠️ Warning! targetTaskExecuteAsUser parameter is not provided."
+        enableIf: "{% if config.spfcUserToggle and parameters.targetTaskExecuteAsUser | trim | default('') == '' %} true {% else %} false {% endif %}"
+
+      - displayName: User Name
+        attributeName: userName
+        type: textBox
+        default: ''
+        isRequired: false
+        enableIf: "{% if config.spfcUserToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Allow Overlapping Execution
+        attributeName: overlapExecToggle
+        type: toggleButton
+        default: false
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption not in ['Predecessor'] %} true {% else %} false {% endif %}"
+
+      - displayName: Enable Task Graph Config
+        attributeName: taskGraphToggle
+        type: toggleButton
+        default: false
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption not in ['Predecessor'] %} true {% else %} false {% endif %}"
+
+      - displayName: Configuration JSON
+        attributeName: configJSON
+        type: textBox
+        default: ''
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption not in ['Predecessor'] and config.taskGraphToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Auto-Suspend After Failures
+        attributeName: autoSuspendToggle
+        type: toggleButton
+        default: false
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption not in ['Predecessor'] %} true {% else %} false {% endif %}"
+
+      - displayName: Number of Consecutive Failures (💡Range. 0 - No Limit)
+        attributeName: numFailures
+        type: textBox
+        default: '10'
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption not in ['Predecessor'] and config.autoSuspendToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Enable Auto-Retry
+        attributeName: autoRetryToggle
+        type: toggleButton
+        default: false
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption not in ['Predecessor'] %} true {% else %} false {% endif %}"
+
+      - displayName: Retry Attempts
+        attributeName: retryAttmpt
+        type: textBox
+        default: '0'
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption not in ['Predecessor'] and config.autoRetryToggle %} true {% else %} false {% endif %}"
+
+    - groupName: Notification Options
+      enableIf: "{% if config.schrefresh == false or config.schedulePeriodOption in ['Predecessor'] or not config.syncTable %} false {% else %} true {% endif %}"
+      items:
+
+      - displayName: Enable Error Notifications
+        attributeName: errNotifyToggle
+        type: toggleButton
+        default: false
+        isRequired: false
+
+      - type: label
+        attributeName: warningErrIntName
+        displayName: "⚠️ Warning: targetTaskErrorIntegration parameter is not provided."
+        enableIf: "{% if config.errNotifyToggle and parameters.targetTaskErrorIntegration | trim | default('') == '' %} true {% else %} false {% endif %}"
+
+      - displayName: Error Integration Name
+        attributeName: errIntName
+        type: textBox
+        default: ''
+        isRequired: false
+        enableIf: "{% if config.errNotifyToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Enable Success Notifications
+        attributeName: successNotifyToggle
+        type: toggleButton
+        default: false
+        isRequired: false
+
+      - type: label
+        attributeName: warningSuccIntName
+        displayName: "⚠️ Warning: targetTaskSuccessIntegration parameter is not provided."
+        enableIf: "{% if config.successNotifyToggle and parameters.targetTaskSuccessIntegration | trim | default('') == '' %} true {% else %} false {% endif %}"
+
+      - displayName: Success Integration Name
+        attributeName: succIntName
+        type: textBox
+        default: ''
+        isRequired: false
+        enableIf: "{% if config.successNotifyToggle %} true {% else %} false {% endif %}"
+name: External Iceberg REST Table
+type: NodeType
