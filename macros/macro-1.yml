@@ -40,7 +40,10 @@ macroString: |-
       {% set ns = namespace(column_dict = {}) %}
       {# Populate column dictionary #}
       {{ buildcoldict(ns) }}
-
+  {% else %}
+      {% set ns = namespace(column_dict = {}) %}
+      {# Populate column dictionary #}
+      {{ buildcoldict(ns) }}
   {% endif %}
 
   {#-----------------------------------------------------------------
@@ -337,10 +340,9 @@ macroString: |-
   Input: 
       parameterValue  (string)  - Environment parameter value e.g. parameters.targetTaskSuccessIntegration
       devFallback     (string)  - Fallback value to use when parameterValue is 'DEV ENVIRONMENT' e.g. config.succIntName
-      prefix          (string)  - SQL keyword prefix for the output e.g. 'SUCCESS_INTEGRATION'
 
   Output: 
-      Returns a full SQL parameter assignment string e.g. SUCCESS_INTEGRATION = MY_INTEGRATION
+      Returns a full SQL parameter assignment string e.g. MY_INTEGRATION
 
   Description:
       Generalised macro to handle environment-aware parameter resolution.
@@ -370,16 +372,15 @@ macroString: |-
       sortorder_by_colv()
       → ORDER BY "EMP_ID" ASC, "CREATED_AT" DESC
   ####################################################################################################################################}
-  {%- macro sortorder_by_colv() -%}
-      {%- if config.orderby -%}
-          {%- set ns = namespace(cols=[]) -%}
-          {%- for i in config.orderbycolumn.get('items') -%}
-              {%- set ns.cols = ns.cols + ['"' + i.sortColName.name + '" ' + i.sortOrder] -%}
-          {%- endfor -%}
+  {%- macro sortorder_by_colv() %}
+      {%- if config.orderby %}
+          {%- set ns = namespace(cols=[]) %}
+          {%- for i in config.orderbycolumn.get('items') %}
+              {%- set ns.cols = ns.cols + ['"' + i.sortColName.name + '" ' + i.sortOrder] %}
+          {%- endfor %}
           ORDER BY {{ ns.cols | join(', ') }}
-      {%- endif -%}
-  {%- endmacro -%}
-
+      {%- endif %}
+  {%- endmacro %}
 
   {% macro get_partition_by() %}
       {%- if config.partitionByToggle and config.partitionByConfig.get("items") %}
@@ -401,5 +402,28 @@ macroString: |-
           {{ '' }}
       {%- endif %}
   {% endmacro %}
+
+  {####################################################################################################################################
+    Description:
+      Resolves a deployment parameter value based on the environment.
+      If the parameter is set to 'DEV ENVIRONMENT', falls back to the
+      node config value. Otherwise uses the parameter value directly.
+
+    Inputs:
+      - paramValue   : The deployment parameter value (e.g., parameters.targetTaskErrorIntegration)
+      - configValue  : The fallback config value used in DEV ENVIRONMENT (e.g., config.errIntName)
+      - sqlPrefix    : The SQL prefix to prepend to the resolved value (e.g., 'ERROR_INTEGRATION = ')
+
+    Output:
+      Returns a SQL fragment with the resolved value.
+      e.g., ERROR_INTEGRATION = my_sns_integration
+  ####################################################################################################################################}
+  {%- macro resolve_env_parameter(paramValue, configValue) -%}
+      {%- if paramValue | default('') == 'DEV ENVIRONMENT' -%}
+          {{ configValue | trim }}
+      {%- else -%}
+          {{ paramValue | default('') }}
+      {%- endif -%}
+  {%- endmacro -%}
 name: macro
 type: Macro

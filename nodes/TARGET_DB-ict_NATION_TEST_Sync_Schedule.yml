@@ -55,7 +55,7 @@ operation:
     testsEnabled: false
     truncateBefore: false
     userName: ""
-    whName: ""
+    whName: COMPUTE_WH
   database: ""
   deployEnabled: true
   description: ""

@@ -56,25 +56,25 @@ does not permit copying or modification for any other purpose.
                 {%- endfor %}
             )
             {{ get_partition_by() }}
-            {%- if targetFileSize %} TARGET_FILE_SIZE = {{ targetFileSize if targetFileSize == 'AUTO' else "'" ~ targetFileSize ~ "'" }} {%- endif %}
+            {% if targetFileSize %} TARGET_FILE_SIZE = {{ targetFileSize if targetFileSize == 'AUTO' else "'" ~ targetFileSize ~ "'" }} {%- endif %}
             
         {%- else %}
 
-            {%- set extvol = parameter_check(parameters.externalVolumne, desiredState.config.extvolume) %}
-            {%- set catalogval = parameter_check(parameters.catalogIntegration, desiredState.config.catint) %}
-            {%- set catalogtablename = desiredState.config.cattable if desiredState.config.cattable | trim | length > 0 else node.name %}
-            {%- set catalogdbname = parameter_check(parameters.catalogNamespace, desiredState.config.catdb) %}
+            {%- set extvol = resolve_env_parameter(parameters.targetExternalVolume, desiredState.config.extvolume) %}
+            {%- set catalogval = resolve_env_parameter(parameters.targetRESTCatalogIntegration, desiredState.config.catint) %}
+            {%- set catalogtablename = resolve_env_parameter(parameters.targetCatalogTableName, desiredState.config.cattable if desiredState.config.cattable | trim | length > 0 else node.name) %}
+            {%- set catalogdbname = resolve_env_parameter(parameters.targetCatalogNamespace, desiredState.config.catdb) %}
 
             CREATE OR REPLACE {{desiredState.node.materializationType}} {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }}
-            {%- if extvol | length > 0 %} EXTERNAL_VOLUME = '{{ extvol }}' {%- endif %}
-            {%- if catalogval | length > 0 %} CATALOG = '{{ catalogval }}' {%- endif %}
-            {%- if catalogtablename | length > 0 %} CATALOG_TABLE_NAME = '{{ catalogtablename }}' {%- endif %}
-            {%- if catalogdbname  | length > 0 %} CATALOG_NAMESPACE = '{{ catalogdbname }}' {%- endif %}
+            {% if extvol | length > 0 %} EXTERNAL_VOLUME = '{{ extvol }}' {%- endif %}
+            {% if catalogval | length > 0 %} CATALOG = '{{ catalogval }}' {%- endif %}
+            {% if catalogtablename | length > 0 %} CATALOG_TABLE_NAME = '{{ catalogtablename }}' {%- endif %}
+            {% if catalogdbname  | length > 0 %} CATALOG_NAMESPACE = '{{ catalogdbname }}' {%- endif %}
 
         {%- endif %}
-        {%- if desiredState.node.description | length > 0 %} COMMENT = '{{ desiredState.node.description | escape }}' {%- endif %}
-        {%- if autoRefresh %} AUTO_REFRESH = TRUE {%- endif %}
-        {%- if replaceInvalidChars %} REPLACE_INVALID_CHARACTERS = TRUE {%- endif %}
+        {% if desiredState.node.description | length > 0 %} COMMENT = '{{ desiredState.node.description | escape }}' {%- endif %}
+        {% if autoRefresh %} AUTO_REFRESH = TRUE {%- endif %}
+        {% if replaceInvalidChars %} REPLACE_INVALID_CHARACTERS = TRUE {%- endif %}
     {%- endif %}
  
 {%- elif currentState != undefined and desiredState == undefined %}
