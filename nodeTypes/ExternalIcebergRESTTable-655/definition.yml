@@ -99,22 +99,42 @@ metadata:
         isRequired: false
         enableIf: "{% if config.schemaTable %} true {% else %} false {% endif %}"
 
+      - type: label
+        attributeName: warningVolumeParameter
+        displayName: "⚠️ Warning! targetExternalVolume parameter is not provided"
+        enableIf: "{%- if config.syncTable and (parameters == {} or parameters.targetExternalVolume == '' ) %} true {%- else %} false {%- endif %}"
+
       - displayName: External Volume
         attributeName: extvolume
         type: textBox
         default: ""
         enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
 
+      - type: label
+        attributeName: warningSyncCatalog
+        displayName: "⚠️ Warning! targetRESTCatalogIntegration parameter is not provided"
+        enableIf: "{%- if config.syncTable and (parameters == {} or parameters.targetRESTCatalogIntegration == '' ) %} true {%- else %} false {%- endif %}"
+
       - displayName: REST Catalog
         attributeName: catint
         type: textBox
         enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
+
+      - type: label
+        attributeName: warningSyncTable
+        displayName: "⚠️ Warning! targetCatalogTableName parameter is not provided"
+        enableIf: "{%- if config.syncTable and (parameters == {} or parameters.targetCatalogTableName == '' ) %} true {%- else %} false {%- endif %}"
 
       - displayName: Catalog Table Name (ℹ️ Default. Node Name)
         attributeName: cattable
         type: textBox
         default: ""
         enableIf: "{% if config.syncTable %} true {% else %} false {% endif %}"
+
+      - type: label
+        attributeName: warningNamespace
+        displayName: "⚠️ Warning! targetCatalogNamespace parameter is not provided"
+        enableIf: "{%- if config.syncTable and (parameters == {} or parameters.targetCatalogNamespace == '' ) %} true {%- else %} false {%- endif %}"
       
       - displayName: Catalog Namespace
         attributeName: catdb
@@ -213,7 +233,7 @@ metadata:
 
       # Warehouse name you want the task to run #
       - type: label
-        attributeName: warningParameter
+        attributeName: warningtaskParameter
         displayName: "⚠️ Warning! targetTaskWarehouse parameter is not provided"
         enableIf: "{%- if (parameters == {} or parameters.targetTaskWarehouse == '' ) and config.schedulingMode == 'Warehouse Task' %} true {%- else %} false {%- endif %}"
 
