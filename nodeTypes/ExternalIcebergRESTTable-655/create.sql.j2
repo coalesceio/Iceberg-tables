@@ -240,7 +240,7 @@ does not permit copying or modification for any other purpose.
     {%- set targetTableDatabase = ref_no_link(currentState.node.location.name, currentState.node.name).split('.')[0] %} 
     {%- set targetTableSchema = ref_no_link(currentState.node.location.name, currentState.node.name).split('.')[1] %} 
 
-    {%- if currentState.config.schrefresh and not desiredState.config.schemaTable %}
+    {%- if currentState.config.schrefresh and not currentState.config.schemaTable %}
         {# FQ Root Task name #}
         {%- set fullyQualifiedRootTaskName = targetTableDatabase + '.' + targetTableSchema + '."' + currentState.config.rootTask + '"'%}
 
