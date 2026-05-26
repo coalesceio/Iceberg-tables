@@ -123,6 +123,7 @@ You can use this option to create an Iceberg table registered in the AWS Glue Da
 
 * The Role in the Workspace and Environment properties of Coalesce should be `ACCOUNTADMIN` in order to successfully create an Iceberg table. You can also grant `SYSADMIN` roles to `EXTERNAL VOLUME`, `CATALOG INTEGRATION` created.
 * An `EXTERNAL VOLUME`, `CATALOG INTEGRATION` is expected to be created in Snowflake at the Storage Location chosen in the Node properties.
+* To enable task success/failure notifications, an AWS SNS Notification Integration must be set up in Snowflake. This requires an AWS SNS Topic, an IAM Role with SNS publish permissions, and a Snowflake Notification Integration linked to the SNS topic. Refer to the [Snowflake SNS Integration Guide](https://docs.snowflake.com/en/user-guide/notifications/creating-notification-integration-amazon-sns) for setup steps.
 
 ### External Iceberg Table Configuration
 
@@ -202,77 +203,36 @@ If schedule refresh mode is set to true then Task Scheduling Options can be used
 
 ### External Iceberg Table With Task Deployment Parameters
 
-* **targetTaskWarehouse**: Alows you to specify a different wa **targetTaskWarehouse**: Alows you to specify a different warehouse used to run a task in different environments. Default value: `DEV ENVIRONMENT`
+### Task Deployment Parameters
 
-When set to `DEV ENVIRONMENT` the value entered in the **Task Scheduling Options > Run Task Warehouse** will be used when creating the task.
+All parameters default to `DEV ENVIRONMENT`, which uses the value set in **Task Scheduling Options**. Set to any other value to override per environment.
 
+| Parameter | Description |
+|---|---|
+| `targetTaskWarehouse` | Warehouse used to run the task |
+| `targetTaskExecuteAsUser` | Snowflake user the task executes as |
+| `targetTaskErrorIntegration` | SNS integration for error notifications |
+| `targetTaskSuccessIntegration` | SNS integration for success notifications |
+
+---
+
+**Example — DEV ENVIRONMENT (uses Task Scheduling Options values)**
 ```json
 {
-    "targetTaskWarehouse": "DEV ENVIRONMENT"
+  "targetTaskWarehouse": "DEV ENVIRONMENT",
+  "targetTaskExecuteAsUser": "DEV ENVIRONMENT",
+  "targetTaskErrorIntegration": "DEV ENVIRONMENT",
+  "targetTaskSuccessIntegration": "DEV ENVIRONMENT"
 }
 ```
 
-When set to any value other than `DEV ENVIRONMENT` the node will attempt to create the task using a Snowflake warehouse with the specified value.
-
-For example, with the below setting for the parameter in a QA environment, the task will execute using a warehouse named `compute_wh`.
-
+**Example — Override for QA/Production environment**
 ```json
 {
-    "targetTaskWarehouse": "compute_wh"
-}
-```
-
-* **targetTaskExecuteAsUser**: Allows you to specify a different user to execute the task across environments. Default value: `DEV ENVIRONMENT`
-
-When set to `DEV ENVIRONMENT`, the value entered in **Task Scheduling Options > Execute As** is used when creating the task.
-
-```json
-{
-    "targetTaskExecuteAsUser": "DEV ENVIRONMENT"
-}
-```
-
-When set to any other value, the task is created to execute as the specified Snowflake user.
-
-```json
-{
-    "targetTaskExecuteAsUser": "xxxxxx"
-}
-```
-
-* **targetTaskErrorIntegration**: Allows you to specify a different error notification integration across environments. Default value: `DEV ENVIRONMENT`
-
-When set to `DEV ENVIRONMENT`, the value entered in **Task Scheduling Options > Error Integration** is used when creating the task.
-
-```json
-{
-    "targetTaskErrorIntegration": "DEV ENVIRONMENT"
-}
-```
-
-When set to any other value, the task is created using the specified Snowflake notification integration for error handling.
-
-```json
-{
-    "targetTaskErrorIntegration": "my_error_integration"
-}
-```
-
-* **targetTaskSuccessIntegration**: Allows you to specify a different success notification integration across environments. Default value: `DEV ENVIRONMENT`
-
-When set to `DEV ENVIRONMENT`, the value entered in **Task Scheduling Options > Success Integration** is used when creating the task.
-
-```json
-{
-    "targetTaskSuccessIntegration": "DEV ENVIRONMENT"
-}
-```
-
-When set to any other value, the task is created using the specified Snowflake notification integration for success handling.
-
-```json
-{
-    "targetTaskSuccessIntegration": "my_success_integration"
+  "targetTaskWarehouse": "compute_wh",
+  "targetTaskExecuteAsUser": "qa_user",
+  "targetTaskErrorIntegration": "my_error_integration",
+  "targetTaskSuccessIntegration": "my_success_integration"
 }
 ```
 
@@ -375,6 +335,7 @@ You can use this option to create an Iceberg table registered in the AWS Glue Da
 * A Snowflake External Volume configured with `ALLOW_WRITES = TRUE`  pointing to the target S3 location.
 * Either catalog-vended credentials or a storage integration configured for Snowflake to access the underlying S3 data.
 * Use a Snowflake **catalog-linked database** to create and register the Iceberg table in AWS Glue during deployment with Create Mode.
+* To enable task success/failure notifications, an AWS SNS Notification Integration must be set up in Snowflake. This requires an AWS SNS Topic, an IAM Role with SNS publish permissions, and a Snowflake Notification Integration linked to the SNS topic. Refer to the [Snowflake SNS Integration Guide](https://docs.snowflake.com/en/user-guide/notifications/creating-notification-integration-amazon-sns) for setup steps.
 
 ### Key Features
  
@@ -493,77 +454,42 @@ If schedule refresh mode is set to true then Task Scheduling Options can be used
 
 ### External Iceberg REST Table With Task Deployment Parameters
 
-* **targetTaskWarehouse**: Alows you to specify a different warehouse used to run a task in different environments. Default value: `DEV ENVIRONMENT`
+### Task Deployment Parameters
 
-When set to `DEV ENVIRONMENT` the value entered in the **Task Scheduling Options > Run Task Warehouse** will be used when creating the task.
+All parameters default to `DEV ENVIRONMENT`, which uses the value set in **Config Options**. Set to any other value to override per environment.
 
+| Parameter | Description |
+|---|---|
+| `targetTaskWarehouse` | Warehouse used to run the task |
+| `targetTaskExecuteAsUser` | Snowflake user the task executes as |
+| `targetTaskErrorIntegration` | SNS integration for error notifications |
+| `targetTaskSuccessIntegration` | SNS integration for success notifications |
+| `targetExternalVolume` | External volume used for the Iceberg table |
+| `targetRESTCatalogIntegration` | REST Catalog integration used for the Iceberg table |
+
+---
+
+**Example — DEV ENVIRONMENT (uses Task Scheduling Options values)**
 ```json
 {
-    "targetTaskWarehouse": "DEV ENVIRONMENT"
+  "targetTaskWarehouse": "DEV ENVIRONMENT",
+  "targetTaskExecuteAsUser": "DEV ENVIRONMENT",
+  "targetTaskErrorIntegration": "DEV ENVIRONMENT",
+  "targetTaskSuccessIntegration": "DEV ENVIRONMENT",
+  "targetExternalVolume": "DEV ENVIRONMENT",
+  "targetRESTCatalogIntegration": "DEV ENVIRONMENT"
 }
 ```
 
-When set to any value other than `DEV ENVIRONMENT` the node will attempt to create the task using a Snowflake warehouse with the specified value.
-
-For example, with the below setting for the parameter in a QA environment, the task will execute using a warehouse named `compute_wh`.
-
+**Example — Override for QA/Production environment**
 ```json
 {
-    "targetTaskWarehouse": "compute_wh"
-}
-```
-
-* **targetTaskExecuteAsUser**: Allows you to specify a different user to execute the task across environments. Default value: `DEV ENVIRONMENT`
-
-When set to `DEV ENVIRONMENT`, the value entered in **Task Scheduling Options > Execute As** is used when creating the task.
-
-```json
-{
-    "targetTaskExecuteAsUser": "DEV ENVIRONMENT"
-}
-```
-
-When set to any other value, the task is created to execute as the specified Snowflake user.
-
-```json
-{
-    "targetTaskExecuteAsUser": "xxxxxxx"
-}
-```
-
-* **targetTaskErrorIntegration**: Allows you to specify a different error notification integration across environments. Default value: `DEV ENVIRONMENT`
-
-When set to `DEV ENVIRONMENT`, the value entered in **Task Scheduling Options > Error Integration** is used when creating the task.
-
-```json
-{
-    "targetTaskErrorIntegration": "DEV ENVIRONMENT"
-}
-```
-
-When set to any other value, the task is created using the specified Snowflake notification integration for error handling.
-
-```json
-{
-    "targetTaskErrorIntegration": "my_error_integration"
-}
-```
-
-* **targetTaskSuccessIntegration**: Allows you to specify a different success notification integration across environments. Default value: `DEV ENVIRONMENT`
-
-When set to `DEV ENVIRONMENT`, the value entered in **Task Scheduling Options > Success Integration** is used when creating the task.
-
-```json
-{
-    "targetTaskSuccessIntegration": "DEV ENVIRONMENT"
-}
-```
-
-When set to any other value, the task is created using the specified Snowflake notification integration for success handling.
-
-```json
-{
-    "targetTaskSuccessIntegration": "my_success_integration"
+  "targetTaskWarehouse": "compute_wh",
+  "targetTaskExecuteAsUser": "qa_user",
+  "targetTaskErrorIntegration": "my_error_integration",
+  "targetTaskSuccessIntegration": "my_success_integration",
+  "targetExternalVolume": "my_external_volume",
+  "targetRESTCatalogIntegration": "my_rest_catalog_integration"
 }
 ```
 
