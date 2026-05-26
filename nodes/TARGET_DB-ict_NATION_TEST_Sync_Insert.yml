@@ -56,7 +56,7 @@ operation:
     userName: ""
     whName: ""
   database: ""
-  deployEnabled: false
+  deployEnabled: true
   description: ""
   isMultisource: false
   locationName: TARGET_DB
