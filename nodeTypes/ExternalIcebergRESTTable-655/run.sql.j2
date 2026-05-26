@@ -16,7 +16,7 @@ does not permit copying or modification for any other purpose.
     {%- endif %}
 {%- endfor %}
 
-{%- if config.schrefresh == false or config.schemaTable %}
+{%- if (config.syncTable and config.schrefresh == false) or config.schemaTable %}
     {%- if config.truncateBefore %}
 
         {%- if config.schemaTable %}
@@ -56,7 +56,7 @@ does not permit copying or modification for any other purpose.
             {{ sortorder_by_colv() }}
         )
         {%- if config.insertStrategy in ['UNION', 'UNION ALL'] and not loop.last %}
-            {{config.insertStrategy}}
+            {{ config.insertStrategy }}
         {%- endif %}
     {%- endfor %}
 {%- else %}
