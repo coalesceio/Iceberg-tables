@@ -1,5 +1,5 @@
 fileVersion: 1
-id: "788"
+id: "789"
 mappingDefinitions:
   SOURCE_DATA:
     database: TANVI_DEV
@@ -10,5 +10,5 @@ mappingDefinitions:
   TARGET_DEV:
     database: TANVI_GLUE_LINKED_QA_DB
     schema: iceberg_restapi_db_qa
-name: New_239
+name: 239_New
 type: Environment
