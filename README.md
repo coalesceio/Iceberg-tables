@@ -472,11 +472,6 @@ All parameters default to `DEV ENVIRONMENT`, which uses the value set in **Confi
 
 ---
 
-**Example — DEV ENVIRONMENT**
-```json
-
----
-
 **Example — DEV ENVIRONMENT (uses Task Scheduling Options values)**
 ```json
 {
