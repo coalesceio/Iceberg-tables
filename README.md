@@ -111,7 +111,7 @@ If a Snowflake Iceberg table is dropped from the workspace and commited to Git r
 
 ## External Iceberg Table
 
-External Iceberg table node is an external Iceberg table node wrapped with task functionality.
+External Iceberg table node type is an external Iceberg table node type wrapped with task functionality.
 
 An Iceberg table uses the Apache Iceberg open table format specification, which provides an abstraction layer on data files stored in open formats. [Iceberg tables](https://docs.snowflake.com/en/user-guide/tables-iceberg) for Snowflake combine the performance and query semantics of regular Snowflake tables with external cloud storage that you manage. They are ideal for existing data lakes that you cannot, or choose not to, store in Snowflake.
 
@@ -319,7 +319,7 @@ The following stages are executed.
 
 ## External Iceberg REST Table
 
-External Iceberg REST Table node is an external Iceberg table node wrapped with task functionality.
+External Iceberg REST Table node type provides an external Apache Iceberg table wrapped with task functionality.
 
 An Iceberg table uses the Apache Iceberg open table format specification, which provides an abstraction layer on data files stored in open formats. [Iceberg tables](https://docs.snowflake.com/en/user-guide/tables-iceberg) for Snowflake combine the performance and query semantics of regular Snowflake tables with external cloud storage that you manage. They are ideal for existing data lakes that you cannot, or choose not to, store in Snowflake.
 
