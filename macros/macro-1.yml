@@ -421,7 +421,7 @@ macroString: |-
       e.g., ERROR_INTEGRATION = my_sns_integration
   ####################################################################################################################################}
   {%- macro resolve_env_parameter(paramValue, configValue) -%}
-      {%- if paramValue | default('') == 'DEV ENVIRONMENT' -%}
+      {%- if parameters == {} or paramValue == '' or paramValue | default('') == 'DEV ENVIRONMENT' -%}
           {{ configValue | trim }}
       {%- else -%}
           {{ paramValue | default('') }}

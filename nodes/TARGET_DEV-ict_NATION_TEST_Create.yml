@@ -3,7 +3,7 @@ id: 13fd8be6-1a2f-482a-8990-a3a4ccc1d1ac
 name: ict_NATION_TEST_Create
 operation:
   config:
-    autoRefresh: false
+    autoRefresh: true
     autoRetryToggle: false
     autoSuspendToggle: false
     catdb: ""

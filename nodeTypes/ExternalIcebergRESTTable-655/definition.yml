@@ -101,8 +101,8 @@ metadata:
 
       - type: label
         attributeName: warningVolumeParameter
-        displayName: "⚠️ Warning! targetExternalVolume parameter is not provided"
-        enableIf: "{%- if config.syncTable and config.extvolume | trim | length == 0 and (parameters == {} or parameters.targetExternalVolume == '' ) %} true {%- else %} false {%- endif %}"
+        displayName: "⚠️ Warning! External Volume cannot be empty. Please provide targetExternalVolume parameter or config value"
+        enableIf: "{%- if config.syncTable and config.extvolume | trim | length == 0 and (parameters == {} or parameters.targetExternalVolume == '' or parameters.targetExternalVolume == 'DEV ENVIRONMENT') %} true {%- else %} false {%- endif %}"
 
       - displayName: External Volume
         attributeName: extvolume
@@ -112,8 +112,8 @@ metadata:
 
       - type: label
         attributeName: warningSyncCatalog
-        displayName: "⚠️ Warning! targetRESTCatalogIntegration parameter is not provided"
-        enableIf: "{%- if config.syncTable and config.catint | trim | length == 0 and (parameters == {} or parameters.targetRESTCatalogIntegration == '' ) %} true {%- else %} false {%- endif %}"
+        displayName: "⚠️ Warning! REST Catalog cannot be empty. Please provide targetRESTCatalogIntegration parameter or config value"
+        enableIf: "{%- if config.syncTable and config.catint | trim | length == 0 and (parameters == {} or parameters.targetRESTCatalogIntegration == '' or parameters.targetRESTCatalogIntegration == 'DEV ENVIRONMENT') %} true {%- else %} false {%- endif %}"
 
       - displayName: REST Catalog
         attributeName: catint
@@ -122,8 +122,8 @@ metadata:
 
       - type: label
         attributeName: warningNamespace
-        displayName: "⚠️ Warning! targetCatalogNamespace parameter is not provided"
-        enableIf: "{%- if config.syncTable and config.catdb | trim | length == 0 and (parameters == {} or parameters.targetCatalogNamespace == '' ) %} true {%- else %} false {%- endif %}"
+        displayName: "⚠️ Warning! Catalog Namespace cannot be empty. Please provide targetCatalogNamespace parameter or config value"
+        enableIf: "{%- if config.syncTable and config.catdb | trim | length == 0 and (parameters == {} or parameters.targetCatalogNamespace == '' or parameters.targetCatalogNamespace == 'DEV ENVIRONMENT') %} true {%- else %} false {%- endif %}"
       
       - displayName: Catalog Namespace
         attributeName: catdb
@@ -133,8 +133,8 @@ metadata:
 
       - type: label
         attributeName: warningSyncTable
-        displayName: "⚠️ Warning! targetCatalogTableName parameter is not provided"
-        enableIf: "{%- if config.syncTable and config.cattable | trim | length == 0 and (parameters == {} or parameters.targetCatalogTableName == '' ) %} true {%- else %} false {%- endif %}"
+        displayName: "⚠️ Warning! Catalog Table Name cannot be empty. Please provide targetCatalogTableName parameter or config value"
+        enableIf: "{%- if config.syncTable and config.cattable | trim | length == 0 and (parameters == {} or parameters.targetCatalogTableName == '' or parameters.targetCatalogTableName == 'DEV ENVIRONMENT') %} true {%- else %} false {%- endif %}"
 
       - displayName: Catalog Table Name (ℹ️ Default. Node Name)
         attributeName: cattable

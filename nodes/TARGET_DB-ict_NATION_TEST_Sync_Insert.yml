@@ -7,15 +7,15 @@ operation:
     autoRetryToggle: false
     autoSuspendToggle: false
     catdb: ""
-    catint: ICEBERG_GLUE_RESTAPI_CATALOG
-    cattable: ict_NATION_TEST_Create
+    catint: ""
+    cattable: ""
     configJSON: ""
     errIntName: ""
     errNotifyToggle: false
     execTime:
       items:
         - {}
-    extvolume: ICEBERG_S3_RESTAPI_VOLUME
+    extvolume: ""
     groupByAll: false
     maxServerlessSize: 6. XXLARGE
     minServerlessSize: 1. XSMALL
