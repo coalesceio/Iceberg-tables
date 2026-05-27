@@ -339,25 +339,6 @@ macroString: |-
   {%- endmacro %}
 
   {####################################################################################################################################
-  Input: 
-      parameterValue  (string)  - Environment parameter value e.g. parameters.targetTaskSuccessIntegration
-      devFallback     (string)  - Fallback value to use when parameterValue is 'DEV ENVIRONMENT' e.g. config.succIntName
-
-  Output: 
-      Returns a full SQL parameter assignment string e.g. MY_INTEGRATION
-
-  Description:
-      Generalised macro to handle environment-aware parameter resolution.
-  ####################################################################################################################################}
-  {%- macro parameter_check(parameterValue, devFallback) -%}
-      {%- if devFallback | default('') | length > 0 -%}
-          {{ devFallback | trim }}
-      {%- elif parameterValue | default('') | length > 0 and parameterValue != 'DEV ENVIRONMENT' -%}
-          {{ parameterValue | trim }}
-      {%- endif -%}
-  {%- endmacro -%}
-
-  {####################################################################################################################################
   Input:
       None — reads directly from config.orderby and config.orderbycolumn
 
@@ -384,6 +365,26 @@ macroString: |-
       {%- endif %}
   {%- endmacro %}
 
+  {####################################################################################################################################
+    Macro : get_partition_by
+
+    Description:
+      Generates the PARTITION BY clause for an Iceberg table based on
+      the nodes partition configuration. Supports both column-level
+      partitions and transform expressions (e.g., TRUNCATE, BUCKET).
+
+    Inputs (from node config):
+      - config.partitionByToggle      : boolean — enables/disables partitioning
+      - config.partitionByConfig.items: list of partition entries, each containing:
+          - columnNameExpressions     : transform expression (e.g., TRUNCATE(10, n_name), BUCKET(6, n_nationkey))
+          - columnName.name           : plain column name used when no expression is defined (e.g., n_regionkey)
+
+    Output:
+      - If toggle is ON and valid partitions exist:
+          PARTITION BY (TRUNCATE(10, n_name), n_regionkey, BUCKET(6, n_nationkey))
+      - If toggle is OFF or no valid partitions found:
+          '' (empty string)
+  ####################################################################################################################################}
   {% macro get_partition_by() %}
       {%- if config.partitionByToggle and config.partitionByConfig.get("items") %}
           {%- set partitions = namespace(list=[]) %}

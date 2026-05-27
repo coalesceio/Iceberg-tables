@@ -68,8 +68,8 @@ does not permit copying or modification for any other purpose.
             CREATE OR REPLACE {{desiredState.node.materializationType}} {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }}
             {% if extvol | length > 0 %} EXTERNAL_VOLUME = '{{ extvol }}' {%- endif %}
             {% if catalogval | length > 0 %} CATALOG = '{{ catalogval }}' {%- endif %}
-            {% if catalogtablename | length > 0 %} CATALOG_TABLE_NAME = '{{ catalogtablename }}' {%- endif %}
             {% if catalogdbname  | length > 0 %} CATALOG_NAMESPACE = '{{ catalogdbname }}' {%- endif %}
+            {% if catalogtablename | length > 0 %} CATALOG_TABLE_NAME = '{{ catalogtablename }}' {%- endif %}
 
         {%- endif %}
         {% if desiredState.node.description | length > 0 %} COMMENT = '{{ desiredState.node.description | escape }}' {%- endif %}
