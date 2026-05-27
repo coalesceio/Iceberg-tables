@@ -335,6 +335,7 @@ You can use this option to create an Iceberg table registered in the AWS Glue Da
 * A Snowflake External Volume configured with `ALLOW_WRITES = TRUE`  pointing to the target S3 location.
 * Either catalog-vended credentials or a storage integration configured for Snowflake to access the underlying S3 data.
 * Use a Snowflake **catalog-linked database** to create and register the Iceberg table in AWS Glue during deployment with Create Mode.
+* An AWS Glue Database created in the Glue Data Catalog, under which Iceberg tables will be registered and managed.
 * To enable task success/failure notifications, an AWS SNS Notification Integration must be set up in Snowflake. This requires an AWS SNS Topic, an IAM Role with SNS publish permissions, and a Snowflake Notification Integration linked to the SNS topic. Refer to the [Snowflake SNS Integration Guide](https://docs.snowflake.com/en/user-guide/notifications/creating-notification-integration-amazon-sns) for setup steps.
 
 ### Key Features
